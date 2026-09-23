@@ -1,4 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './LandingScreen.css';
+import loginBackground from '../../assets/images/loginppage.png';
+import {
+  IconLock,
+  IconTerminal,
+  IconVolume,
+  IconVolumeMute,
+  IconMic,
+  IconMicOff,
+  IconAlert,
+  IconCheck,
+  IconTrophy,
+  IconShield
+} from './CyberIcons';
+import { voiceManager } from '../utils/voiceManager';
 
 export const LandingScreen = ({
   isActive,
@@ -13,15 +28,19 @@ export const LandingScreen = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [voiceOn, setVoiceOn] = useState(() => voiceManager.isEnabled());
+
+  const handleToggleVoice = () => {
+    const next = voiceManager.toggle();
+    setVoiceOn(next);
+    if (next) {
+      voiceManager.speakWelcome();
+    }
+  };
 
   // Cinematic opening sequence stages: 0 to 5
-  // 0: Black screen (0.0s)
-  // 1: Green sparks/particles (0.5s)
   // Cinematic opening sequence stages: default 5 for immediate high-impact render
   const [introStage, setIntroStage] = useState(5);
-
-  // Mouse Parallax offset
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
 
   // Live Leaderboard data for preview section
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -30,18 +49,15 @@ export const LandingScreen = ({
   // Sector hover state
   const [hoveredSector, setHoveredSector] = useState(null);
 
-  // Canvas particle ref
-  const canvasRef = useRef(null);
-
   // Trigger cinematic opening timeline
   useEffect(() => {
     if (!isActive) return;
 
-    const t1 = setTimeout(() => setIntroStage(1), 500);
-    const t2 = setTimeout(() => setIntroStage(2), 1000);
-    const t3 = setTimeout(() => setIntroStage(3), 2000);
-    const t4 = setTimeout(() => setIntroStage(4), 3000);
-    const t5 = setTimeout(() => setIntroStage(5), 4000);
+    const t1 = setTimeout(() => setIntroStage(1), 300);
+    const t2 = setTimeout(() => setIntroStage(2), 600);
+    const t3 = setTimeout(() => setIntroStage(3), 1200);
+    const t4 = setTimeout(() => setIntroStage(4), 1800);
+    const t5 = setTimeout(() => setIntroStage(5), 2400);
 
     return () => {
       clearTimeout(t1);
@@ -70,89 +86,6 @@ export const LandingScreen = ({
     };
     fetchTopScores();
   }, [isActive]);
-
-  // Mouse move parallax handler (throttled & disabled on touch)
-  const handleMouseMove = (e) => {
-    if (window.innerWidth < 768) return; // Disable on mobile
-    const { clientX, clientY } = e;
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    const offsetX = (clientX - centerX) / centerX; // -1 to 1
-    const offsetY = (clientY - centerY) / centerY; // -1 to 1
-
-    setMouseOffset({
-      x: offsetX * 10, // ±10px
-      y: offsetY * 6   // ±6px
-    });
-  };
-
-  // High-performance particle canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animationFrameId;
-
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
-    window.addEventListener('resize', handleResize);
-
-    // Particle count: 35 for desktop, 15 for mobile
-    const count = window.innerWidth < 768 ? 15 : 35;
-    const particles = [];
-
-    for (let i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        radius: Math.random() * 2 + 0.8,
-        speedX: (Math.random() - 0.5) * 0.4,
-        speedY: -Math.random() * 0.6 - 0.2, // Drifting upward like embers/dust
-        opacity: Math.random() * 0.6 + 0.2,
-        pulseSpeed: Math.random() * 0.02 + 0.01,
-        color: Math.random() > 0.4 ? 'rgba(0, 255, 102, ' : (Math.random() > 0.5 ? 'rgba(0, 229, 255, ' : 'rgba(200, 220, 210, ')
-      });
-    }
-
-    const render = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      particles.forEach((p) => {
-        p.x += p.speedX;
-        p.y += p.speedY;
-
-        // Wrap around screen
-        if (p.y < -10) p.y = height + 10;
-        if (p.x < -10) p.x = width + 10;
-        if (p.x > width + 10) p.x = -10;
-
-        p.opacity += Math.sin(Date.now() * p.pulseSpeed) * 0.005;
-        const currentOpacity = Math.max(0.1, Math.min(0.85, p.opacity));
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `${p.color}${currentOpacity})`;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = 'rgba(0, 255, 102, 0.4)';
-        ctx.fill();
-      });
-
-      animationFrameId = requestAnimationFrame(render);
-    };
-
-    render();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
 
   if (!isActive) return null;
 
@@ -204,169 +137,205 @@ export const LandingScreen = ({
   ];
 
   return (
-    <div className="landing-root" onMouseMove={handleMouseMove}>
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* 1. CINEMATIC FULL VIEWPORT HERO SECTION (100vw × 100vh)             */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      <section className="hero-viewport" id="hero-section">
-        {/* Background Image Layer with Parallax */}
-        <div
-          className={`hero-bg-layer ${introStage >= 2 ? 'hero-bg-layer--visible' : ''}`}
-          style={{
-            backgroundImage: "url('/assets/images/doom-villain.png')",
-            transform: `translate3d(${mouseOffset.x}px, ${mouseOffset.y}px, 0) scale(${introStage >= 2 ? 1 : 1.06})`,
-          }}
-        />
+    <div className="landing-root">
+      {/* PERSISTENT FIXED SITE BACKGROUND */}
+      <div
+        className="site-background"
+        style={{
+          backgroundImage: `url(${loginBackground})`
+        }}
+      />
 
-        {/* Doom Atmospheric Layers */}
-        <div className="hero-layer hero-layer--color-grade" />
-        <div className="hero-layer hero-layer--vignette" />
-        <div className="hero-layer hero-layer--scanlines" />
-        <div className="hero-layer hero-layer--film-grain" />
-
-        {/* Pulsing Green Ambient Bloom */}
-        <div className="hero-layer hero-layer--radial-bloom" />
-
-        {/* Light Sweep Animation at 2.0s */}
-        <div className={`hero-light-sweep ${introStage >= 3 ? 'hero-light-sweep--animate' : ''}`} />
-
-        {/* Particle Canvas */}
-        <canvas ref={canvasRef} className="hero-particles-canvas" />
+      <div className="app-content">
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* 1. CINEMATIC FULL VIEWPORT HERO SECTION (100vw × 100vh)             */}
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        <section className="hero-viewport" id="hero-section">
 
         {/* Top Header / Brand Bar */}
         <header className={`hero-header ${introStage >= 4 ? 'hero-header--visible' : ''}`}>
-          <div className="hero-brand">
-            <span className="hero-brand__icon">⚡</span>
-            <span className="hero-brand__text">AIDEX'26 TECHNICAL ESCAPE ROOM // LATVERIA-NET</span>
+          <div className="hero-header-left">
+            <div className="hero-brand__emblem">
+              <IconTerminal size={18} color="var(--cyber-neon)" />
+            </div>
+            <div className="hero-brand__text-group">
+              <span className="hero-brand__title">AIDEX '26</span>
+              <span className="hero-brand__sub">TECHNICAL ESCAPE ROOM</span>
+            </div>
           </div>
 
-          <div className="hero-header-actions">
+          <div className="hero-header-center">
+            <div className="hero-brand__node-pill">
+              <span className="hero-brand__pulse-dot" />
+              <span className="hero-brand__node-label">GATEWAY // ONLINE</span>
+            </div>
+          </div>
+
+          <div className="hero-header-right">
+            <button
+              id="btn-voice-toggle-hero"
+              type="button"
+              className="hero-header-btn hero-header-btn--voice"
+              aria-pressed={voiceOn}
+              title={voiceOn ? "Disable mission control voice" : "Enable mission control voice"}
+              onClick={handleToggleVoice}
+              style={{
+                borderColor: voiceOn ? 'var(--cyber-cyan)' : 'var(--cyber-border)',
+                color: voiceOn ? 'var(--cyber-cyan)' : 'var(--cyber-muted)'
+              }}
+            >
+              <span className="hero-header-btn__icon">
+                {voiceOn ? <IconMic size={14} color="var(--cyber-cyan)" /> : <IconMicOff size={14} />}
+              </span>
+              <span className="hero-header-btn__label">{voiceOn ? 'VOICE ON' : 'VOICE OFF'}</span>
+            </button>
+
             <button
               id="btn-sound-toggle-hero"
+              type="button"
               className="hero-header-btn hero-header-btn--sound"
               aria-pressed={soundOn}
               title="Toggle ambient audio"
               onClick={onToggleSound}
             >
-              <span className="hero-header-btn__icon">{soundOn ? '🔊' : '🔇'}</span>
+              <span className="hero-header-btn__icon">
+                {soundOn ? <IconVolume size={14} color="var(--cyber-neon)" /> : <IconVolumeMute size={14} />}
+              </span>
               <span className="hero-header-btn__label">{soundOn ? 'SOUND ON' : 'SOUND OFF'}</span>
             </button>
           </div>
         </header>
 
         {/* Central Hero Content */}
-        <div
-          className="hero-content-container"
-          style={{
-            transform: `translate3d(${-mouseOffset.x * 0.2}px, ${-mouseOffset.y * 0.2}px, 0)`
-          }}
-        >
-          {/* Incident Tag */}
+        <div className="hero-content-container">
+          {/* Incident / Mission Status Tag */}
           <div className={`hero-incident-chip ${introStage >= 3 ? 'hero-incident-chip--visible' : ''}`}>
             <span className="hero-incident-chip__dot" />
-            <span>INCIDENT REPORT // 26-001 · CLASSIFIED ACCESS</span>
+            <span>CLASSIFIED MISSION</span>
           </div>
 
           {/* Main Titles */}
           <h1 className={`hero-main-title ${introStage >= 4 ? 'hero-main-title--visible' : ''}`}>
-            AIDEX'26
+            AIDEX '26
           </h1>
 
           <div className={`hero-subtitle ${introStage >= 4 ? 'hero-subtitle--visible' : ''}`}>
-            THE DOOMSDAY PROTOCOL
+            TECHNICAL ESCAPE ROOM
           </div>
 
           <p className={`hero-tagline ${introStage >= 5 ? 'hero-tagline--visible' : ''}`}>
-            Five rooms. Five challenges. One way out.
+            "FIVE ROOMS. FIVE CHALLENGES. ONE WAY OUT."
           </p>
 
-          {/* Operative Login Form - Access Needed */}
+          <div className={`hero-down-arrow ${introStage >= 5 ? 'hero-down-arrow--visible' : ''}`}>↓</div>
+
+          {/* Operative Login Form - Access Required */}
           <div className={`hero-form-card ${introStage >= 5 ? 'hero-form-card--visible' : ''}`}>
-            {/* Header: Access Needed */}
-            <div className="hero-card-header" style={{ marginBottom: '14px', borderBottom: '1px solid rgba(0, 255, 102, 0.2)', paddingBottom: '10px', textAlign: 'left', width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#00ff66', fontSize: '1.35rem', fontWeight: 800, fontFamily: 'var(--font-display)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                <span>🔒</span>
-                <span>ACCESS NEEDED</span>
+            {/* Corner Bracket Accents */}
+            <div className="pc-bracket pc-bracket--tl" />
+            <div className="pc-bracket pc-bracket--tr" />
+            <div className="pc-bracket pc-bracket--bl" />
+            <div className="pc-bracket pc-bracket--br" />
+
+            {/* Header: Access Required */}
+            <div className="hero-card-header">
+              <div className="hero-card-header__title-row">
+                <div className="hero-card-header__left" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <IconLock size={18} color="var(--cyber-neon)" />
+                  <span className="hero-card-header__title">ACCESS TERMINAL</span>
+                </div>
+                <span className="hero-card-header__badge">CLASSIFIED MISSION ACCESS</span>
               </div>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: '#9bb5a7', margin: '6px 0 0', lineHeight: '1.4' }}>
-                Enter the team name and password created by your event administrator to launch your mission.
-              </p>
             </div>
 
             <form onSubmit={handleSubmit} style={{ width: '100%' }}>
               <div className="hero-form-grid">
                 <div className="hero-input-group">
-                  <label className="hero-input-label">
-                    TEAM NAME
+                  <label className="hero-input-label" htmlFor="input-team-name">
+                    <span className="hero-input-label__prefix">▸ CALLSIGN:</span>
+                    <span>TEAM NAME</span>
                   </label>
-                  <input
-                    type="text"
-                    id="input-team-name"
-                    placeholder="Enter team name..."
-                    value={teamCallsign}
-                    onChange={(e) => {
-                      setTeamCallsign(e.target.value);
-                      setErrorMessage('');
-                    }}
-                    className="hero-input"
-                    disabled={isSubmitting}
-                    autoComplete="off"
-                  />
+                  <div className="hero-input-wrap">
+                    <input
+                      type="text"
+                      id="input-team-name"
+                      placeholder="ENTER TEAM NAME..."
+                      value={teamCallsign}
+                      onChange={(e) => {
+                        setTeamCallsign(e.target.value);
+                        setErrorMessage('');
+                      }}
+                      className="hero-input"
+                      disabled={isSubmitting}
+                      autoComplete="off"
+                      spellCheck="false"
+                    />
+                  </div>
                 </div>
 
                 <div className="hero-input-group">
-                  <label className="hero-input-label">
-                    PASSWORD
+                  <label className="hero-input-label" htmlFor="input-team-passcode">
+                    <span className="hero-input-label__prefix">▸ ACCESS KEY:</span>
+                    <span>PASSWORD</span>
                   </label>
-                  <input
-                    type="password"
-                    id="input-team-passcode"
-                    placeholder="Enter team password..."
-                    value={teamPasscode}
-                    onChange={(e) => {
-                      setTeamPasscode(e.target.value);
-                      setErrorMessage('');
-                    }}
-                    className="hero-input"
+                  <div className="hero-input-wrap">
+                    <input
+                      type="password"
+                      id="input-team-passcode"
+                      placeholder="ENTER TEAM PASSWORD..."
+                      value={teamPasscode}
+                      onChange={(e) => {
+                        setTeamPasscode(e.target.value);
+                        setErrorMessage('');
+                      }}
+                      className="hero-input"
+                      disabled={isSubmitting}
+                      autoComplete="current-password"
+                    />
+                  </div>
+                </div>
+
+                {errorMessage && (
+                  <div className="hero-error-banner" role="alert">
+                    <span className="hero-error-banner__icon">
+                      <IconAlert size={16} color="var(--cyber-red)" />
+                    </span>
+                    <span className="hero-error-banner__text">{errorMessage}</span>
+                  </div>
+                )}
+
+                <div className="hero-actions-row">
+                  <button
+                    type="submit"
+                    id="btn-enter-protocol"
+                    className="btn-enter-protocol"
                     disabled={isSubmitting}
-                    autoComplete="current-password"
-                  />
+                  >
+                    <span className="btn-enter-protocol__text">
+                      {isSubmitting
+                        ? 'AUTHENTICATING CLEARANCE...'
+                        : 'ACCESS MISSION'}
+                    </span>
+                    <span className="btn-enter-protocol__arrow">→</span>
+                  </button>
                 </div>
               </div>
 
-              {errorMessage && (
-                <div className="hero-error-banner">
-                  <span className="hero-error-banner__icon">⚠</span>
-                  <span>{errorMessage}</span>
-                </div>
-              )}
-
-              <div className="hero-actions-row">
-                <button
-                  type="submit"
-                  id="btn-enter-protocol"
-                  className="btn-enter-protocol"
-                  disabled={isSubmitting}
-                >
-                  <span className="btn-enter-protocol__glow" />
-                  <span className="btn-enter-protocol__text">
-                    {isSubmitting
-                      ? 'AUTHENTICATING CLEARANCE...'
-                      : '⚡ ACCESS MISSION'}
-                  </span>
-                  <span className="btn-enter-protocol__arrow">→</span>
-                </button>
+              {/* Security Metadata Footer */}
+              <div className="hero-card-footer">
+                <span>AUTH GATEWAY // SECURE TLS-AES256</span>
+                <span className="hero-card-footer__ready">OPERATIVE READY</span>
               </div>
             </form>
           </div>
-        </div>
 
-        {/* Scroll Indicator */}
-        <div className={`hero-scroll-hint ${introStage >= 5 ? 'hero-scroll-hint--visible' : ''}`} onClick={() => {
-          document.getElementById('incident-section')?.scrollIntoView({ behavior: 'smooth' });
-        }}>
-          <span className="hero-scroll-hint__text">CLASSIFIED MISSION BRIEFING</span>
-          <span className="hero-scroll-hint__arrow">▾</span>
+          {/* Scroll / Mission Briefing Indicator directly below terminal */}
+          <div className={`hero-scroll-hint ${introStage >= 5 ? 'hero-scroll-hint--visible' : ''}`} onClick={() => {
+            document.getElementById('incident-section')?.scrollIntoView({ behavior: 'smooth' });
+          }}>
+            <span className="hero-scroll-hint__text">CLASSIFIED MISSION BRIEFING</span>
+            <span className="hero-scroll-hint__arrow">↓</span>
+          </div>
         </div>
       </section>
 
@@ -435,10 +404,10 @@ export const LandingScreen = ({
                 Operatives breach the perimeter. Unlocks only when the Game Master authorizes the signal. Individual countdown timers begin immediately.
               </p>
               <ul className="protocol-card__list">
-                <li>✓ Round-robin scheduling & dispatch audits</li>
-                <li>✓ Relational schema normalization</li>
-                <li>✓ Dijkstra weighted reactor traversal</li>
-                <li>✓ Stack & queue sequential container parsing</li>
+                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Round-robin scheduling & dispatch audits</li>
+                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Relational schema normalization</li>
+                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Dijkstra weighted reactor traversal</li>
+                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Stack & queue sequential container parsing</li>
               </ul>
             </div>
 
@@ -450,10 +419,10 @@ export const LandingScreen = ({
                 Locked behind Doctor Doom's secondary barrier until authorized. Remaining 5 assigned questions reveal dynamically.
               </p>
               <ul className="protocol-card__list">
-                <li>✓ Coffman deadlock circular-wait mitigation</li>
-                <li>✓ Deterministic finite automata decoding</li>
-                <li>✓ Bitwise masking & permission registers</li>
-                <li>✓ Asymptotic complexity performance audit</li>
+                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Coffman deadlock circular-wait mitigation</li>
+                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Deterministic finite automata decoding</li>
+                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Bitwise masking & permission registers</li>
+                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Asymptotic complexity performance audit</li>
               </ul>
             </div>
           </div>
@@ -492,7 +461,10 @@ export const LandingScreen = ({
                   <div className="sector-card__sub">{sec.subtitle}</div>
                   <div className="sector-card__footer">
                     <span className="sector-card__cat">{sec.category}</span>
-                    <span className="sector-card__lock">{isHovered ? '⚡ ACCESS LOCKED' : '🔒 ENCRYPTED'}</span>
+                    <span className="sector-card__lock" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <IconLock size={12} color={isHovered ? 'var(--cyber-neon)' : 'var(--cyber-muted)'} />
+                      <span>{isHovered ? 'ACCESS RESTRICTED' : 'ENCRYPTED'}</span>
+                    </span>
                   </div>
                 </div>
               );
@@ -539,8 +511,16 @@ export const LandingScreen = ({
                   <tbody>
                     {leaderboardData.map((row) => (
                       <tr key={row.participantId} className="leaderboard-row">
-                        <td className="leaderboard-cell--rank">
-                          {row.rank === 1 ? '🥇 01' : row.rank === 2 ? '🥈 02' : row.rank === 3 ? '🥉 03' : `#${String(row.rank).padStart(2, '0')}`}
+                        <td className="leaderboard-cell--rank" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          {row.rank === 1 ? (
+                            <><IconTrophy size={14} color="#ffd700" /> #01</>
+                          ) : row.rank === 2 ? (
+                            <><IconTrophy size={14} color="#c0c0c0" /> #02</>
+                          ) : row.rank === 3 ? (
+                            <><IconTrophy size={14} color="#cd7f32" /> #03</>
+                          ) : (
+                            `#${String(row.rank).padStart(2, '0')}`
+                          )}
                         </td>
                         <td className="leaderboard-cell--team">{row.teamName}</td>
                         <td>{row.session1Score} / 15</td>
@@ -567,13 +547,15 @@ export const LandingScreen = ({
       <section className="landing-section landing-section--cta">
         <div className="landing-container" style={{ textAlign: 'center' }}>
           <div className="final-cta-card">
-            <span className="final-cta-card__glyph">👑</span>
+            <span className="final-cta-card__glyph">
+              <IconShield size={36} color="var(--cyber-neon)" />
+            </span>
             <h2 className="final-cta-card__title">READY TO BREACH BATTLEWORLD?</h2>
             <p className="final-cta-card__desc">
               Your randomized 10-chamber protocol awaits. Enter your operative callsign and prepare for intrusion.
             </p>
             <button className="btn-enter-protocol btn-enter-protocol--lg" onClick={scrollToHero}>
-              <span className="btn-enter-protocol__text">⚡ INITIATE PROTOCOL CLEARANCE</span>
+              <span className="btn-enter-protocol__text">INITIATE PROTOCOL CLEARANCE</span>
             </button>
           </div>
         </div>
@@ -586,12 +568,15 @@ export const LandingScreen = ({
         <div className="cinematic-breach-transition">
           <div className="cinematic-breach-transition__scanline" />
           <div className="cinematic-breach-transition__content">
-            <div className="cinematic-breach-transition__spinner">⚡</div>
+            <div className="cinematic-breach-transition__spinner">
+              <IconTerminal size={24} color="var(--cyber-neon)" />
+            </div>
             <div className="cinematic-breach-transition__title">ACCESSING DOOM PROTOCOL...</div>
             <div className="cinematic-breach-transition__sub">SYNCHRONIZING SERVER TIME & RANDOMIZING SECTORS</div>
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };

@@ -30,6 +30,8 @@ import { PuzzleCard } from './components/widgets/PuzzleCard';
 import { narrativeEngine } from './engine/narrativeEngine';
 import { SoundManager } from './utils/soundManager';
 import { timerSynchronizer } from './utils/timerSync';
+import { voiceManager } from './utils/voiceManager';
+import { IconCheck, IconTerminal } from './components/CyberIcons';
 
 const TOKEN_KEY = 'AIDEX_PARTICIPANT_TOKEN_V1';
 const TEAM_NAME_KEY = 'AIDEX_TEAM_NAME_V1';
@@ -69,6 +71,23 @@ export default function App() {
   const [revealedParas, setRevealedParas] = useState(1);
   const currentQuestion = currentQuestions[activeQuestionIndex] || currentQuestions[0] || null;
   const currentSessionNumber = eventState.active_session || 1;
+
+  // Voice announcement triggers
+  const hasSpokenWarningRef = useRef(false);
+  useEffect(() => {
+    if (remainingTime <= 300 && remainingTime > 0 && !hasSpokenWarningRef.current) {
+      hasSpokenWarningRef.current = true;
+      voiceManager.speakTimeWarning();
+    } else if (remainingTime > 300) {
+      hasSpokenWarningRef.current = false;
+    }
+  }, [remainingTime]);
+
+  useEffect(() => {
+    if (congratsModalOpen) {
+      voiceManager.speakMissionCompleted();
+    }
+  }, [congratsModalOpen]);
 
   // Helper to ensure window & container scroll to top immediately
   const scrollToTop = () => {
@@ -281,13 +300,13 @@ export default function App() {
                 fetch('/api/participant/state', { headers: { 'x-participant-token': participantToken } })
                   .then((r) => r.json())
                   .then((d) => { if (d && d.success) setSessionStats(d.sessionStats || {}); })
-                  .catch(() => {});
+                  .catch(() => { });
               }
             }
           }
-        } catch (e) {}
+        } catch (e) { }
       };
-    } catch (e) {}
+    } catch (e) { }
 
     return () => {
       if (eventSource) eventSource.close();
@@ -332,6 +351,7 @@ export default function App() {
         setTeamName(data.participant.teamName);
         setEventState(data.eventState);
         SoundManager.play('success', soundOn);
+        voiceManager.speakAccessGranted();
         await syncServerState();
         return { success: true };
       } else {
@@ -357,6 +377,7 @@ export default function App() {
         setTeamName(data.participant.teamName);
         setEventState(data.eventState);
         SoundManager.play('success', soundOn);
+        voiceManager.speakAccessGranted();
         await syncServerState();
         return { success: true };
       } else {
@@ -388,6 +409,9 @@ export default function App() {
       targetIndex: targetIndex,
       isSessionComplete: options.isSessionComplete || false
     });
+    if (targetQ) {
+      voiceManager.speakRoomUnlocked(targetQ.title || targetQ.name);
+    }
     setTransitioning(true);
   };
 
@@ -433,19 +457,20 @@ export default function App() {
       const data = await res.json();
       if (data && data.success) {
         SoundManager.play('success', soundOn);
+        voiceManager.speakCorrect();
 
         // Update currentQuestions with solved and attempts status
         setCurrentQuestions((prev) =>
           prev.map((q) =>
             q.id === currentQuestion.id
               ? {
-                  ...q,
-                  isSolved: true,
-                  attemptsRemaining: 0,
-                  attemptsUsed: data.attemptsUsed || 1,
-                  isLocked: false,
-                  potentialPoints: data.pointsEarned !== undefined ? data.pointsEarned : q.potentialPoints
-                }
+                ...q,
+                isSolved: true,
+                attemptsRemaining: 0,
+                attemptsUsed: data.attemptsUsed || 1,
+                isLocked: false,
+                potentialPoints: data.pointsEarned !== undefined ? data.pointsEarned : q.potentialPoints
+              }
               : q
           )
         );
@@ -484,9 +509,10 @@ export default function App() {
           }, 450);
         }
 
-        return { success: true, ...data };
+        return { success: true, message: data.message };
       } else {
-        SoundManager.play('alert', soundOn);
+        SoundManager.play('error', soundOn);
+        voiceManager.speakIncorrect();
         narrativeEngine.onWrongAnswer(`level_${activeQuestionIndex + 1 + (currentSessionNumber === 2 ? 15 : 0)}`);
 
         // Update attemptsRemaining and isLocked in currentQuestions
@@ -495,12 +521,12 @@ export default function App() {
             prev.map((q) =>
               q.id === currentQuestion.id
                 ? {
-                    ...q,
-                    attemptsRemaining: data.attemptsRemaining,
-                    attemptsUsed: data.attemptsUsed,
-                    isLocked: Boolean(data.isLocked),
-                    potentialPoints: data.isLocked ? 0 : Math.max(0, (q.potentialPoints || 20) - 2)
-                  }
+                  ...q,
+                  attemptsRemaining: data.attemptsRemaining,
+                  attemptsUsed: data.attemptsUsed,
+                  isLocked: Boolean(data.isLocked),
+                  potentialPoints: data.isLocked ? 0 : Math.max(0, (q.potentialPoints || 20) - 2)
+                }
                 : q
             )
           );
@@ -692,40 +718,23 @@ export default function App() {
             {currentQuestion && (
               <>
                 {/* ─── 1. FULL STORY & MISSION INTEL ─── */}
-                <div className="story-block" style={{
-                  background: 'linear-gradient(180deg, rgba(4,18,12,0.75) 0%, rgba(2,5,3,0.95) 100%)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(0,255,102,0.35)',
-                  borderRadius: '10px',
-                  overflow: 'hidden',
-                  boxShadow: '0 0 50px rgba(0,255,102,0.12), 0 20px 40px rgba(0,0,0,0.6)',
-                }}>
-                  <div style={{
-                    background: 'linear-gradient(90deg, rgba(0,255,102,0.18), rgba(0,229,255,0.08), rgba(0,0,0,0))',
-                    borderBottom: '1px solid rgba(0,255,102,0.25)',
-                    padding: '10px 20px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{
-                        width: '8px', height: '8px', borderRadius: '50%',
-                        background: 'var(--doom-green)', boxShadow: '0 0 8px var(--doom-green)',
-                        animation: 'dotPulse 1.5s ease-in-out infinite',
-                      }} />
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--doom-green)', letterSpacing: '0.15em', fontWeight: 'bold' }}>
-                        INCOMING CLASSIFIED TRANSMISSION — LATVERIA-NET
+                <div className="doom-intel-console">
+                  <div className="doom-intel-console__topbar">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#F0B429', letterSpacing: '0.03em', fontWeight: '600' }}>
+                        Latveria-Net Dossier
                       </span>
                     </div>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--ink-faint)' }}>
-                      SESSION {currentSessionNumber} · CHAMBER {displayLevelNumber}/30 ({currentQuestion.category})
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: '#718078', letterSpacing: 'normal' }}>
+                      Session {currentSessionNumber} · Level {displayLevelNumber} of 30 ({currentQuestion.category || 'Logic'})
                     </span>
                   </div>
 
-                  <div style={{ padding: '1.8rem 2rem' }}>
-                    <p className="story-eyebrow">
-                      MISSION INTEL LOG — {currentQuestion.subtitle}
+                  <div className="doom-intel-console__content">
+                    <p className="story-eyebrow" style={{ textTransform: 'none', letterSpacing: 'normal', color: '#00FF9C', fontSize: '0.85rem', fontWeight: '600', marginBottom: '4px' }}>
+                      Mission Intel — {currentQuestion.subtitle || 'If/Else Decisions'}
                     </p>
-                    <h2 className="story-title">
+                    <h2 className="story-title" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.4rem, 3vw, 1.8rem)', fontWeight: '700', color: '#E8F5EE', letterSpacing: 'normal', margin: '4px 0 16px 0' }}>
                       {currentQuestion.name}
                     </h2>
                     <div className="story-text">
@@ -735,11 +744,11 @@ export default function App() {
                           className="story-para-entry"
                           style={{
                             marginBottom: '1rem',
-                            padding: '12px 16px',
-                            background: i === 0 ? 'rgba(0, 255, 102, 0.04)' : 'rgba(255, 255, 255, 0.02)',
+                            padding: '14px 18px',
+                            background: i === 0 ? 'rgba(0, 255, 156, 0.04)' : 'rgba(255, 255, 255, 0.02)',
                             borderLeft: i === revealedParas - 1 && revealedParas < (currentQuestion.story || []).length
                               ? '3px solid var(--doom-cyan)'
-                              : '3px solid rgba(0, 255, 102, 0.35)',
+                              : '3px solid rgba(0, 255, 156, 0.4)',
                             borderRadius: '0 6px 6px 0',
                             animation: 'paraFadeIn 0.3s ease-out forwards',
                             position: 'relative'
@@ -749,34 +758,34 @@ export default function App() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            marginBottom: '6px',
-                            borderBottom: '1px dashed rgba(0, 255, 102, 0.15)',
+                            marginBottom: '8px',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
                             paddingBottom: '4px'
                           }}>
                             <span style={{
-                              fontFamily: 'var(--font-mono)',
-                              fontSize: '0.68rem',
-                              color: 'var(--doom-green)',
-                              letterSpacing: '0.12em',
-                              fontWeight: 700
+                              fontFamily: 'var(--font-body)',
+                              fontSize: '0.78rem',
+                              color: '#9BAFA5',
+                              letterSpacing: 'normal',
+                              fontWeight: 600
                             }}>
-                              ▶ INTEL ENTRY [{String(i + 1).padStart(2, '0')}/{String((currentQuestion.story || []).length).padStart(2, '0')}]
+                              Intel Entry {String(i + 1).padStart(2, '0')} of {String((currentQuestion.story || []).length).padStart(2, '0')}
                             </span>
                             {i === revealedParas - 1 && revealedParas < (currentQuestion.story || []).length && (
                               <span style={{
-                                fontFamily: 'var(--font-mono)',
-                                fontSize: '0.62rem',
+                                fontFamily: 'var(--font-body)',
+                                fontSize: '0.7rem',
                                 color: 'var(--doom-cyan)',
                                 background: 'rgba(0, 229, 255, 0.12)',
                                 border: '1px solid rgba(0, 229, 255, 0.3)',
                                 padding: '1px 6px',
                                 borderRadius: '3px'
                               }}>
-                                LATEST DECRYPT
+                                Latest Entry
                               </span>
                             )}
                           </div>
-                          <p style={{ margin: 0 }} dangerouslySetInnerHTML={{ __html: p }} />
+                          <p style={{ margin: 0, fontSize: '0.98rem', lineHeight: '1.65', color: '#E8F5EE' }} dangerouslySetInnerHTML={{ __html: p }} />
                         </div>
                       ))}
                     </div>
@@ -786,8 +795,8 @@ export default function App() {
                       <div style={{
                         marginTop: '1.2rem',
                         padding: '12px 18px',
-                        background: 'rgba(0, 255, 102, 0.05)',
-                        border: '1px solid rgba(0, 255, 102, 0.25)',
+                        background: 'rgba(5, 15, 10, 0.4)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
                         borderRadius: '6px',
                         display: 'flex',
                         alignItems: 'center',
@@ -795,9 +804,9 @@ export default function App() {
                         flexWrap: 'wrap',
                         gap: '12px'
                       }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <div style={{
-                            width: '100px',
+                            width: '120px',
                             height: '6px',
                             background: 'rgba(255,255,255,0.1)',
                             borderRadius: '3px',
@@ -806,12 +815,15 @@ export default function App() {
                             <div style={{
                               width: `${Math.round((revealedParas / (currentQuestion.story || []).length) * 100)}%`,
                               height: '100%',
-                              background: 'var(--doom-green)',
+                              background: '#00FF9C',
                               transition: 'width 0.3s ease'
                             }} />
                           </div>
-                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--ink-dim)' }}>
-                            DECRYPTED {revealedParas} OF {(currentQuestion.story || []).length} ENTRIES ({Math.round((revealedParas / (currentQuestion.story || []).length) * 100)}%)
+                          <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: '#9BAFA5' }}>
+                            Decrypted {revealedParas} of {(currentQuestion.story || []).length} entries
+                          </span>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: '#00FF9C', fontWeight: 'bold' }}>
+                            {Math.round((revealedParas / (currentQuestion.story || []).length) * 100)}%
                           </span>
                         </div>
 
@@ -826,21 +838,23 @@ export default function App() {
                                   setRevealedParas((prev) => Math.min((currentQuestion.story || []).length, prev + 1));
                                 }}
                                 style={{
-                                  background: 'linear-gradient(135deg, rgba(0,255,102,0.25), rgba(0,229,255,0.2))',
-                                  border: '1px solid var(--doom-green)',
-                                  color: 'var(--doom-green-bright)',
-                                  fontWeight: 'bold',
-                                  fontSize: '0.78rem',
+                                  background: 'rgba(0, 255, 156, 0.15)',
+                                  border: '1px solid #00FF9C',
+                                  color: '#00FF9C',
+                                  fontWeight: '600',
+                                  fontSize: '0.82rem',
                                   padding: '6px 14px',
-                                  letterSpacing: '0.08em',
+                                  letterSpacing: '0.03em',
+                                  textTransform: 'none',
                                   cursor: 'pointer',
                                   display: 'flex',
                                   alignItems: 'center',
-                                  gap: '6px'
+                                  gap: '6px',
+                                  borderRadius: '4px'
                                 }}
                               >
-                                <span>⚡ REVEAL NEXT PARAGRAPH [{revealedParas + 1}/{(currentQuestion.story || []).length}]</span>
-                                <span>▾</span>
+                                <span>Reveal Next</span>
+                                <span style={{ fontSize: '9px' }}>▾</span>
                               </button>
 
                               <button
@@ -851,28 +865,30 @@ export default function App() {
                                   setRevealedParas((currentQuestion.story || []).length);
                                 }}
                                 style={{
-                                  border: '1px solid rgba(0,255,102,0.3)',
-                                  color: 'var(--ink-dim)',
-                                  fontSize: '0.72rem',
-                                  padding: '6px 10px',
-                                  cursor: 'pointer'
+                                  border: '1px solid rgba(255,255,255,0.15)',
+                                  color: '#9BAFA5',
+                                  fontSize: '0.8rem',
+                                  padding: '6px 12px',
+                                  textTransform: 'none',
+                                  cursor: 'pointer',
+                                  borderRadius: '4px'
                                 }}
                               >
-                                REVEAL ALL
+                                Reveal All
                               </button>
                             </>
                           ) : (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                               <span style={{
-                                fontFamily: 'var(--font-mono)',
-                                fontSize: '0.75rem',
-                                color: 'var(--doom-green)',
-                                fontWeight: 'bold',
+                                fontFamily: 'var(--font-body)',
+                                fontSize: '0.82rem',
+                                color: '#00FF9C',
+                                fontWeight: '600',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px'
                               }}>
-                                <span>✓</span> FULL DOSSIER DECRYPTED
+                                <IconCheck size={14} color="#00FF9C" /> Full dossier decrypted
                               </span>
                               <button
                                 type="button"
@@ -880,14 +896,16 @@ export default function App() {
                                 onClick={() => setRevealedParas(1)}
                                 style={{
                                   border: '1px solid rgba(255,255,255,0.15)',
-                                  color: 'var(--ink-faint)',
-                                  fontSize: '0.68rem',
+                                  color: '#718078',
+                                  fontSize: '0.75rem',
                                   padding: '3px 8px',
-                                  cursor: 'pointer'
+                                  textTransform: 'none',
+                                  cursor: 'pointer',
+                                  borderRadius: '4px'
                                 }}
                                 title="Collapse back to first entry"
                               >
-                                COLLAPSE
+                                Collapse
                               </button>
                             </div>
                           )}
@@ -901,11 +919,11 @@ export default function App() {
                 {currentQuestion.codeLines && currentQuestion.codeLines.length > 0 ? (
                   <CodeWidget stage={currentQuestion} />
                 ) : currentQuestion.investigationType === 'terminal' ? (
-                  <TerminalWidget evidenceList={evidenceList} onAddEvidence={() => {}} />
+                  <TerminalWidget evidenceList={evidenceList} onAddEvidence={() => { }} />
                 ) : currentQuestion.investigationType === 'signal' ? (
-                  <SignalWidget evidenceList={evidenceList} onAddEvidence={() => {}} />
+                  <SignalWidget evidenceList={evidenceList} onAddEvidence={() => { }} />
                 ) : currentQuestion.investigationType === 'network' ? (
-                  <NetworkMapWidget evidenceList={evidenceList} onAddEvidence={() => {}} />
+                  <NetworkMapWidget evidenceList={evidenceList} onAddEvidence={() => { }} />
                 ) : currentQuestion.investigationType === 'final' ? (
                   <FinalRecapWidget evidenceList={evidenceList} fragments={{}} />
                 ) : (
@@ -1006,7 +1024,7 @@ export default function App() {
         } : null}
         evidenceList={evidenceList}
         narrativeState={narrativeState}
-        onFlagContradiction={() => {}}
+        onFlagContradiction={() => { }}
       />
 
       {/* CINEMATIC ROOM TRANSITION OVERLAY */}

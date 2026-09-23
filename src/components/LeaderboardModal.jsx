@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { IconTrophy, IconClock, IconCross } from './CyberIcons';
 
 export const LeaderboardModal = ({ isOpen, onClose }) => {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -41,7 +42,9 @@ export const LeaderboardModal = ({ isOpen, onClose }) => {
         {/* HEADER */}
         <div className="leaderboard-modal__header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div className="leaderboard-modal__icon">🏆</div>
+            <div className="leaderboard-modal__icon">
+              <IconTrophy size={26} color="var(--doom-green-bright)" />
+            </div>
             <div>
               <div className="leaderboard-modal__title">AIDEX'26 // OFFICIAL ESCAPE ROOM LEADERBOARD</div>
               <div className="leaderboard-modal__subtitle">
@@ -56,8 +59,9 @@ export const LeaderboardModal = ({ isOpen, onClose }) => {
                 ● LIVE SYNC ({lastUpdated})
               </span>
             )}
-            <button className="btn btn--danger btn--sm" onClick={onClose}>
-              ✕ CLOSE
+            <button className="btn btn--danger btn--sm" onClick={onClose} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <IconCross size={13} />
+              <span>CLOSE</span>
             </button>
           </div>
         </div>
@@ -99,8 +103,16 @@ export const LeaderboardModal = ({ isOpen, onClose }) => {
                         key={row.participantId}
                         className={`leaderboard-row ${isTop1 ? 'leaderboard-row--gold' : isTop2 ? 'leaderboard-row--silver' : isTop3 ? 'leaderboard-row--bronze' : ''}`}
                       >
-                        <td className="leaderboard-cell--rank">
-                          {isTop1 ? '🥇 01' : isTop2 ? '🥈 02' : isTop3 ? '🥉 03' : `#${String(row.rank).padStart(2, '0')}`}
+                        <td className="leaderboard-cell--rank" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          {isTop1 ? (
+                            <><IconTrophy size={14} color="#ffd700" /> 01</>
+                          ) : isTop2 ? (
+                            <><IconTrophy size={14} color="#c0c0c0" /> 02</>
+                          ) : isTop3 ? (
+                            <><IconTrophy size={14} color="#cd7f32" /> 03</>
+                          ) : (
+                            `#${String(row.rank).padStart(2, '0')}`
+                          )}
                         </td>
                         <td className="leaderboard-cell--team">
                           {row.teamName}
@@ -137,8 +149,9 @@ export const LeaderboardModal = ({ isOpen, onClose }) => {
                             {row.session2Points || 0} pts ({formatTime(row.session2Time)})
                           </span>
                         </td>
-                        <td className="leaderboard-cell--total-time" style={{ color: 'var(--doom-cyan)', fontWeight: 'bold' }}>
-                          ⏱️ {formatTime(row.totalTime)}
+                        <td className="leaderboard-cell--total-time" style={{ color: 'var(--doom-cyan)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <IconClock size={13} color="var(--doom-cyan)" />
+                          <span>{formatTime(row.totalTime)}</span>
                         </td>
                         <td>
                           <span className={`leaderboard-status-tag ${row.isComplete ? 'leaderboard-status-tag--done' : 'leaderboard-status-tag--progress'}`}>

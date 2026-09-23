@@ -83,7 +83,7 @@ export function DoomCinematicEvent({ eventData, onComplete }) {
             className="btn btn--charge doom-cinematic-next-btn"
             onClick={handleNext}
           >
-            {hasMore ? 'PROCEED TO NEXT SEQUENCE ▶' : 'ENGAGE OBJECTIVE // DISMISS ⚡'}
+            {hasMore ? 'PROCEED TO NEXT SEQUENCE →' : 'ENGAGE OBJECTIVE // DISMISS'}
           </button>
         </div>
       </div>

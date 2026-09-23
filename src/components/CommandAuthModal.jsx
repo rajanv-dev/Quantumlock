@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { IconTerminal, IconCrown, IconAlert } from './CyberIcons';
 
 export const CommandAuthModal = ({
   isOpen,
@@ -97,12 +98,12 @@ export const CommandAuthModal = ({
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(0,255,102,0.2)', paddingBottom: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: 'var(--doom-green-bright)', fontSize: '1.1rem' }}>⚡</span>
+                <IconTerminal size={15} color="var(--doom-green-bright)" />
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--doom-green-bright)', letterSpacing: '0.1em', fontWeight: 'bold' }}>
                   LATVERIA-NET SECURE COMMAND PALETTE
                 </span>
               </div>
-              <button className="btn btn--ghost btn--xs" onClick={onClose}>✕ ESC</button>
+              <button className="btn btn--ghost btn--xs" onClick={onClose}>ESC</button>
             </div>
 
             <form onSubmit={handleCommandSubmit}>
@@ -133,8 +134,9 @@ export const CommandAuthModal = ({
             </form>
 
             {authError && (
-              <div style={{ marginTop: '10px', color: 'var(--doom-amber)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
-                ⚠ {authError}
+              <div style={{ marginTop: '10px', color: 'var(--doom-amber)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <IconAlert size={13} color="var(--doom-amber)" />
+                <span>{authError}</span>
               </div>
             )}
 
@@ -159,12 +161,12 @@ export const CommandAuthModal = ({
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(168,85,247,0.3)', paddingBottom: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ color: 'var(--doom-purple)', fontSize: '1.2rem' }}>👑</span>
+                <IconCrown size={16} color="var(--doom-purple)" />
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--doom-purple)', letterSpacing: '0.1em', fontWeight: 'bold' }}>
                   DOCTOR DOOM // GAME MASTER AUTHENTICATION
                 </span>
               </div>
-              <button className="btn btn--ghost btn--xs" onClick={onClose}>✕ ESC</button>
+              <button className="btn btn--ghost btn--xs" onClick={onClose}>ESC</button>
             </div>
 
             <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#aab8b0', margin: '0 0 14px', lineHeight: '1.4' }}>
@@ -199,9 +201,13 @@ export const CommandAuthModal = ({
                     padding: '8px 12px',
                     color: 'var(--doom-red)',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.75rem'
+                    fontSize: '0.75rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
                   }}>
-                    ⚠ {authError}
+                    <IconAlert size={13} color="var(--doom-red)" />
+                    <span>{authError}</span>
                   </div>
                 )}
 
@@ -213,7 +219,7 @@ export const CommandAuthModal = ({
                     style={{ background: 'var(--doom-purple)', borderColor: 'var(--doom-purple)', color: '#fff' }}
                     disabled={isVerifying}
                   >
-                    {isVerifying ? 'VERIFYING...' : '⚡ UNLOCK ADMIN CONTROL'}
+                    {isVerifying ? 'VERIFYING...' : 'UNLOCK ADMIN CONTROL'}
                   </button>
                 </div>
               </div>

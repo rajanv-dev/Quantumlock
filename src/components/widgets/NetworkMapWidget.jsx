@@ -66,7 +66,7 @@ export const NetworkMapWidget = ({ networkPath, onUpdatePath, onLockPath }) => {
                   background: isMatch ? 'var(--doom-red)' : 'rgba(255,255,255,0.05)',
                   color: isMatch ? '#fff' : 'var(--ink-faint)', fontWeight: 'bold'
                 }}>
-                  {isMatch ? '✓ MATCH FOUND' : 'NO MATCH'}
+                  {isMatch ? '[MATCH FOUND]' : '[NO MATCH]'}
                 </span>
               </div>
             </div>

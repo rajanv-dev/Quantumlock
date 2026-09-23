@@ -12,7 +12,7 @@ const QUESTION_JSON_SCHEMA_EXAMPLE = {
   enabled: true,
   investigationType: 'code',
   story: [
-    '<strong>⚠ LATVERIA-NET ENCRYPTED TELEMETRY STREAM</strong>',
+    '<strong>[ALERT] LATVERIA-NET ENCRYPTED TELEMETRY STREAM</strong>',
     'Doctor Doom secures inter-realm telemetry using mathematical trapdoor functions.',
     'The system relies on a public key (e, n) for encryption and a private key (d, n) for decryption based on prime factor decomposition.',
     'Name this foundational asymmetric cryptosystem algorithm.'
@@ -186,10 +186,10 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
         fetchMongoStatus();
         fetchAdminProgress();
       } else {
-        notifySaved('⚠️ ' + (data?.message || 'Sync failed.'));
+        notifySaved('[ALERT] ' + (data?.message || 'Sync failed.'));
       }
     } catch (err) {
-      notifySaved('⚠️ Network error during sync.');
+      notifySaved('[ALERT] Network error during sync.');
     }
   };
 
@@ -241,7 +241,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
   };
 
   const handleResetCompetition = async () => {
-    if (window.confirm('⚠️ DANGER: Reset all participants, scores, hint penalties, and timers for the entire competition?')) {
+    if (window.confirm('[ALERT] DANGER: Reset all participants, scores, hint penalties, and timers for the entire competition?')) {
       try {
         const res = await fetch('/api/admin/event/reset', {
           method: 'POST',
@@ -340,7 +340,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
   };
 
   const handleDeleteParticipant = async (participantId, teamName) => {
-    if (!window.confirm(`⚠️ Are you sure you want to delete participant team '${teamName}' and all associated scores?`)) return;
+    if (!window.confirm(`[ALERT] Are you sure you want to delete participant team '${teamName}' and all associated scores?`)) return;
 
     try {
       const res = await fetch(`/api/admin/participant/${participantId}`, {
@@ -349,7 +349,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
       });
       const data = await parseJsonResponse(res);
       if (res.ok && data.success) {
-        notifySaved(`🗑️ DELETED PARTICIPANT '${teamName}'`);
+        notifySaved(`[DELETE] DELETED PARTICIPANT '${teamName}'`);
         fetchAdminProgress();
       } else {
         alert(data.message || data.error || 'Failed to delete participant.');
@@ -417,7 +417,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
   };
 
   const handleDeleteQuestion = async (qId) => {
-    if (!window.confirm(`⚠️ Are you sure you want to permanently delete Question ${qId}?`)) return;
+    if (!window.confirm(`[ALERT] Are you sure you want to permanently delete Question ${qId}?`)) return;
     try {
       const res = await fetch(`/api/admin/questions/${qId}`, {
         method: 'DELETE',
@@ -554,7 +554,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
         {/* HEADER BAR */}
         <div className="admin-header">
           <div className="admin-header__brand">
-            <div className="admin-header__icon">⚡</div>
+            <div className="admin-header__icon"></div>
             <div>
               <div className="admin-header__title">DOCTOR DOOM // MASTER COMMAND CENTER</div>
               <div className="admin-header__subtitle">
@@ -581,31 +581,31 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
             className={`admin-nav-tab ${activeTab === 'event_control' ? 'admin-nav-tab--active' : ''}`}
             onClick={() => setActiveTab('event_control')}
           >
-            ⚡ EVENT & TIMER CONTROL
+             EVENT & TIMER CONTROL
           </button>
           <button
             className={`admin-nav-tab ${activeTab === 'credentials' ? 'admin-nav-tab--active' : ''}`}
             onClick={() => setActiveTab('credentials')}
           >
-            🔑 PARTICIPANT CREDENTIALS ({eventProgress.totalParticipants || 0})
+             PARTICIPANT CREDENTIALS ({eventProgress.totalParticipants || 0})
           </button>
           <button
             className={`admin-nav-tab ${activeTab === 'leaderboard' ? 'admin-nav-tab--active' : ''}`}
             onClick={() => setActiveTab('leaderboard')}
           >
-            🏆 LIVE LEADERBOARD & SCORING ({leaderboardList.length} TEAMS)
+             LIVE LEADERBOARD & SCORING ({leaderboardList.length} TEAMS)
           </button>
           <button
             className={`admin-nav-tab ${activeTab === 'bank' ? 'admin-nav-tab--active' : ''}`}
             onClick={() => setActiveTab('bank')}
           >
-            🏦 QUESTION BANK & JSON SCHEMA ({questionBank.length} Qs)
+             QUESTION BANK & JSON SCHEMA ({questionBank.length} Qs)
           </button>
           <button
             className={`admin-nav-tab ${activeTab === 'doom' ? 'admin-nav-tab--active' : ''}`}
             onClick={() => setActiveTab('doom')}
           >
-            👑 DOOM DIALOGUES & NARRATIVE
+             DOOM DIALOGUES & NARRATIVE
           </button>
         </div>
 
@@ -663,7 +663,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                     onClick={handleSyncMongo}
                     title="Force full sync between local engine and MongoDB"
                   >
-                    ☁️ SYNC TO MONGODB
+                     SYNC TO MONGODB
                   </button>
                 </div>
 
@@ -672,7 +672,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                     className={`admin-btn ${currentEventStatus === 'CLOSED' ? 'admin-btn--primary' : 'admin-btn--secondary'}`}
                     onClick={() => handleUpdateEventState('CLOSED')}
                   >
-                    🔒 [ 1. CLOSED / GATE LOCKED ]
+                     [ 1. CLOSED / GATE LOCKED ]
                   </button>
                   <button
                     className={`admin-btn ${currentEventStatus === 'SESSION_1_ACTIVE' ? 'admin-btn--primary' : 'admin-btn--secondary'}`}
@@ -690,7 +690,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                     className={`admin-btn ${currentEventStatus === 'SESSION_2_ACTIVE' ? 'admin-btn--primary' : 'admin-btn--secondary'}`}
                     onClick={() => handleUpdateEventState('SESSION_2_ACTIVE')}
                   >
-                    ⚡ [ 4. OPEN SESSION 2 (CHAMBERS 16–30) ]
+                     [ 4. OPEN SESSION 2 (CHAMBERS 16–30) ]
                   </button>
                   <button
                     className={`admin-btn ${currentEventStatus === 'SESSION_2_LOCKED' ? 'admin-btn--danger' : 'admin-btn--secondary'}`}
@@ -724,7 +724,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '1.2rem' }}>⏱️</span>
+                      <span style={{ fontSize: '1.2rem' }}></span>
                       <div>
                         <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 'bold', color: 'var(--doom-green-bright)', fontSize: '0.85rem' }}>
                           LIVE MISSION TIMER CONTROL (ON-THE-FLY SITUATION ADJUSTMENTS)
@@ -918,7 +918,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                       className="admin-btn admin-btn--primary"
                       style={{ padding: '11px 24px', fontWeight: 700, fontSize: '0.85rem' }}
                     >
-                      ⚡ CREATE & STORE CREDENTIALS
+                       CREATE & STORE CREDENTIALS
                     </button>
                   </div>
                 </form>
@@ -932,7 +932,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                   </div>
                   <input
                     type="text"
-                    placeholder="🔍 Search team credentials..."
+                    placeholder=" Search team credentials..."
                     value={credentialsSearch}
                     onChange={(e) => setCredentialsSearch(e.target.value)}
                     className="admin-input"
@@ -970,7 +970,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                             return (
                               <tr key={p.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.85rem' }}>
                                 <td style={{ padding: '12px 10px', fontWeight: 'bold', color: '#fff', fontFamily: 'var(--font-mono)' }}>
-                                  🛡️ {p.teamName}
+                                   {p.teamName}
                                 </td>
                                 <td style={{ padding: '12px 10px', fontFamily: 'var(--font-mono)' }}>
                                   {isEditing ? (
@@ -1039,7 +1039,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                                       style={{ padding: '5px 10px', fontSize: '0.75rem', background: 'rgba(0, 229, 255, 0.15)', border: '1px solid rgba(0, 229, 255, 0.4)', color: '#00e5ff' }}
                                       title="Edit Team Password"
                                     >
-                                      ✏️ Edit Pass
+                                       Edit Pass
                                     </button>
                                     <button
                                       onClick={() => handleDeleteParticipant(p.id, p.teamName)}
@@ -1047,7 +1047,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                                       style={{ padding: '5px 10px', fontSize: '0.75rem', background: 'rgba(255, 50, 50, 0.15)', border: '1px solid rgba(255, 50, 50, 0.4)', color: '#ff4444' }}
                                       title="Delete Participant"
                                     >
-                                      🗑️ Delete
+                                      [DELETE] Delete
                                     </button>
                                   </div>
                                 </td>
@@ -1082,7 +1082,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
               }}>
                 <div>
                   <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 'bold', color: 'var(--doom-green-bright)', fontSize: '0.85rem' }}>
-                    🏆 MASTER COMPETITION SCORING MATRIX & TIE-BREAKER ENGINE
+                     MASTER COMPETITION SCORING MATRIX & TIE-BREAKER ENGINE
                   </div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--ink-dim)', marginTop: '2px' }}>
                     • Solved Room: <strong>+100 Base Points</strong> &nbsp;|&nbsp; • Hints Used: <strong>Deducts Points (−20 pts / hint)</strong> &nbsp;|&nbsp; • Floor: 10 pts/room &nbsp;|&nbsp; • <strong>Tie-Breaker: Lowest Total Completion Time</strong>
@@ -1092,7 +1092,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                   <input
                     type="text"
-                    placeholder="🔍 Filter team callsign..."
+                    placeholder=" Filter team callsign..."
                     className="admin-input"
                     style={{ width: '220px', padding: '6px 12px', fontSize: '0.8rem' }}
                     value={leaderboardSearch}
@@ -1145,7 +1145,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                               className={`leaderboard-row ${isTop1 ? 'leaderboard-row--gold' : isTop2 ? 'leaderboard-row--silver' : isTop3 ? 'leaderboard-row--bronze' : ''}`}
                             >
                               <td className="leaderboard-cell--rank" style={{ fontWeight: 'bold' }}>
-                                {isTop1 ? '🥇 01' : isTop2 ? '🥈 02' : isTop3 ? '🥉 03' : `#${String(row.rank).padStart(2, '0')}`}
+                                {isTop1 ? '01 01' : isTop2 ? '02 02' : isTop3 ? '03 03' : `#${String(row.rank).padStart(2, '0')}`}
                               </td>
                               <td className="leaderboard-cell--team" style={{ color: 'var(--doom-green-bright)' }}>
                                 {row.teamName}
@@ -1178,7 +1178,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                                 </span>
                               </td>
                               <td className="leaderboard-cell--total-time" style={{ color: 'var(--doom-cyan)', fontWeight: 'bold' }}>
-                                ⏱️ {formatTime(row.totalTime)}
+                                 {formatTime(row.totalTime)}
                               </td>
                               <td>
                                 <span className={`leaderboard-status-tag ${row.isComplete ? 'leaderboard-status-tag--done' : 'leaderboard-status-tag--progress'}`}>
@@ -1291,7 +1291,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
                         className="admin-btn admin-btn--xs admin-btn--danger"
                         onClick={() => handleDeleteQuestion(selectedBankQ.id)}
                       >
-                        🗑️ DELETE QUESTION
+                        [DELETE] DELETE QUESTION
                       </button>
                     </div>
                   </div>
@@ -1542,7 +1542,7 @@ export const AdminPanel = ({ isOpen, onClose, adminToken: propAdminToken }) => {
 
               {importError && (
                 <div style={{ marginTop: '8px', padding: '8px 12px', background: 'rgba(255, 51, 102, 0.15)', border: '1px solid var(--doom-red)', borderRadius: '4px', color: 'var(--doom-red)', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>
-                  ⚠️ {importError}
+                  [ALERT] {importError}
                 </div>
               )}
             </div>

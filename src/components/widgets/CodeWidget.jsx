@@ -48,7 +48,7 @@ export const CodeWidget = ({ stage }) => {
             display: 'inline-block'
           }} />
           <span style={{ fontSize: '0.75rem', color: 'var(--doom-green-bright)', fontFamily: 'var(--font-mono)', fontWeight: 'bold', letterSpacing: '0.1em' }}>
-            💻 DOOM LOGIC & CODE INSPECTOR // EXECUTION STATE
+            DOOM LOGIC & CODE INSPECTOR // EXECUTION STATE
           </span>
         </div>
         <button
@@ -57,7 +57,7 @@ export const CodeWidget = ({ stage }) => {
           className="btn btn--ghost btn--sm"
           style={{ fontSize: '0.72rem', padding: '3px 10px', color: 'var(--doom-green-bright)', borderColor: 'rgba(0,255,102,0.3)' }}
         >
-          {copied ? '✓ COPIED' : '📋 COPY TRACE'}
+          {copied ? 'COPIED' : 'COPY TRACE'}
         </button>
       </div>
 

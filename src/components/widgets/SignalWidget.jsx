@@ -113,7 +113,7 @@ export const SignalWidget = ({ stage }) => {
               fontWeight: 'bold',
             }}
           >
-            {scanning ? '◌ RUNNING SCHEMA DIFFERENCE...' : '⚡ COMPARE DATABASE SCHEMAS'}
+            {scanning ? 'RUNNING SCHEMA DIFFERENCE...' : 'COMPARE DATABASE SCHEMAS'}
           </button>
         </div>
       </div>

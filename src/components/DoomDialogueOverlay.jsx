@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { voiceManager } from '../utils/voiceManager';
 import { DOOM_EMOTIONS } from '../data/doomDialogue';
+import { IconVolume, IconVolumeMute, IconChevronRight } from './CyberIcons';
 
 const EMOTION_COLORS = {
   [DOOM_EMOTIONS.IDLE]:        { border: 'var(--doom-green)',   glow: 'rgba(0,255,102,0.3)',    avatar: '#00ff66' },
@@ -100,17 +101,19 @@ export function DoomDialogueOverlay({ dialogue, onChoice, onDismiss }) {
           <div className="ddov-controls">
             <button
               className={`ddov-ctrl ${isMuted ? 'ddov-ctrl--amber' : ''}`}
-              onClick={() => voiceManager.toggleMute()}
+              onClick={() => voiceManager.toggleMute ? voiceManager.toggleMute() : voiceManager.toggle()}
               title={isMuted ? 'Unmute' : 'Mute'}
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              {isMuted ? '🔇' : '🔊'}
+              {isMuted ? <IconVolumeMute size={13} /> : <IconVolume size={13} />}
             </button>
             <button
               className="ddov-ctrl"
               onClick={() => voiceManager.speak(dialogue.text, { emotion })}
               title="Replay"
+              style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)' }}
             >
-              🔁
+              REPLAY
             </button>
           </div>
         </div>
@@ -132,8 +135,9 @@ export function DoomDialogueOverlay({ dialogue, onChoice, onDismiss }) {
                   key={c.id}
                   className="ddov-choice-btn"
                   onClick={() => onChoice(c)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
                 >
-                  <span className="ddov-choice-btn__icon">⚡</span>
+                  <IconChevronRight size={13} color="var(--doom-green)" />
                   <span>{c.label}</span>
                 </button>
               ))}

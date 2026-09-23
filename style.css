@@ -35,10 +35,8 @@
 }
 
 *{ box-sizing: border-box; }
-html,body{ height:100%; }
+html,body,#root{ min-height:100%; margin:0; background:transparent !important; }
 body{
-  margin:0;
-  background: var(--void);
   color: var(--ink);
   font-family: var(--font-body);
   line-height:1.5;

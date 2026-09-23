@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconLock, IconShield, IconCrown, IconTrophy, IconCross } from './CyberIcons';
 
 export const WaitingRoom = ({
   eventState,
@@ -36,11 +37,12 @@ export const WaitingRoom = ({
           {onLogout && (
             <button
               className="btn btn--ghost btn--xs"
-              style={{ borderColor: 'rgba(255, 34, 68, 0.4)', color: 'var(--doom-red, #ff2244)', fontSize: '0.72rem' }}
+              style={{ borderColor: 'rgba(255, 34, 68, 0.4)', color: 'var(--doom-red, #ff2244)', fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
               title="Sign out of operative session"
               onClick={onLogout}
             >
-              🚪 LOGOUT
+              <IconCross size={11} />
+              <span>LOGOUT</span>
             </button>
           )}
         </div>
@@ -55,7 +57,9 @@ export const WaitingRoom = ({
         {status === 'CLOSED' && (
           <div className="waiting-card">
             <div className="waiting-card__icon-orb">
-              <span className="waiting-card__icon">🔒</span>
+              <span className="waiting-card__icon">
+                <IconLock size={32} color="var(--doom-green)" />
+              </span>
             </div>
 
             <h1 className="waiting-card__title">
@@ -91,7 +95,9 @@ export const WaitingRoom = ({
         {(status === 'SESSION_1_LOCKED' || status === 'WAITING_FOR_SESSION_2' || (status === 'SESSION_1_ACTIVE' && sessionStats.session1Completed)) && (
           <div className="waiting-card">
             <div className="waiting-card__icon-orb" style={{ borderColor: 'var(--doom-green)' }}>
-              <span className="waiting-card__icon">🎉</span>
+              <span className="waiting-card__icon">
+                <IconShield size={32} color="var(--doom-green)" />
+              </span>
             </div>
 
             <h1 className="waiting-card__title" style={{ color: 'var(--doom-green)' }}>
@@ -132,16 +138,18 @@ export const WaitingRoom = ({
             </div>
 
             <div style={{ marginTop: '1.5rem', display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button className="btn btn--primary btn--md" onClick={onOpenLeaderboard}>
-                🏆 VIEW LIVE LEADERBOARD
+              <button className="btn btn--primary btn--md" onClick={onOpenLeaderboard} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <IconTrophy size={15} />
+                <span>VIEW LIVE LEADERBOARD</span>
               </button>
               {onLogout && (
                 <button
                   className="btn btn--ghost btn--md"
-                  style={{ borderColor: 'rgba(255, 34, 68, 0.5)', color: 'var(--doom-red, #ff2244)' }}
+                  style={{ borderColor: 'rgba(255, 34, 68, 0.5)', color: 'var(--doom-red, #ff2244)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   onClick={onLogout}
                 >
-                  🚪 LOG OUT
+                  <IconCross size={13} />
+                  <span>LOG OUT</span>
                 </button>
               )}
             </div>
@@ -156,7 +164,9 @@ export const WaitingRoom = ({
         {(status === 'SESSION_2_LOCKED' || (status === 'SESSION_2_ACTIVE' && sessionStats.session2Completed)) && (
           <div className="waiting-card">
             <div className="waiting-card__icon-orb" style={{ borderColor: 'var(--doom-green)' }}>
-              <span className="waiting-card__icon">👑</span>
+              <span className="waiting-card__icon">
+                <IconCrown size={32} color="var(--doom-green)" />
+              </span>
             </div>
 
             <h1 className="waiting-card__title" style={{ color: 'var(--doom-green)' }}>
@@ -179,16 +189,18 @@ export const WaitingRoom = ({
             </div>
 
             <div style={{ marginTop: '1.5rem', display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button className="btn btn--primary btn--lg" onClick={onOpenLeaderboard}>
-                🏆 VIEW FINAL LEADERBOARD
+              <button className="btn btn--primary btn--lg" onClick={onOpenLeaderboard} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <IconTrophy size={16} />
+                <span>VIEW FINAL LEADERBOARD</span>
               </button>
               {onLogout && (
                 <button
                   className="btn btn--ghost btn--lg"
-                  style={{ borderColor: 'rgba(255, 34, 68, 0.5)', color: 'var(--doom-red, #ff2244)' }}
+                  style={{ borderColor: 'rgba(255, 34, 68, 0.5)', color: 'var(--doom-red, #ff2244)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   onClick={onLogout}
                 >
-                  🚪 LOG OUT
+                  <IconCross size={14} />
+                  <span>LOG OUT</span>
                 </button>
               )}
             </div>
@@ -198,7 +210,9 @@ export const WaitingRoom = ({
         {status === 'EVENT_FINISHED' && (
           <div className="waiting-card">
             <div className="waiting-card__icon-orb" style={{ borderColor: 'var(--doom-green-bright)' }}>
-              <span className="waiting-card__icon">👑</span>
+              <span className="waiting-card__icon">
+                <IconCrown size={32} color="var(--doom-green-bright)" />
+              </span>
             </div>
 
             <h1 className="waiting-card__title" style={{ color: 'var(--doom-green-bright)' }}>
@@ -221,16 +235,18 @@ export const WaitingRoom = ({
             </div>
 
             <div style={{ marginTop: '1.5rem', display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button className="btn btn--primary btn--lg" onClick={onOpenLeaderboard}>
-                🏆 VIEW FINAL COMPETITION LEADERBOARD
+              <button className="btn btn--primary btn--lg" onClick={onOpenLeaderboard} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <IconTrophy size={16} />
+                <span>VIEW FINAL COMPETITION LEADERBOARD</span>
               </button>
               {onLogout && (
                 <button
                   className="btn btn--ghost btn--lg"
-                  style={{ borderColor: 'rgba(255, 34, 68, 0.5)', color: 'var(--doom-red, #ff2244)' }}
+                  style={{ borderColor: 'rgba(255, 34, 68, 0.5)', color: 'var(--doom-red, #ff2244)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   onClick={onLogout}
                 >
-                  🚪 LOG OUT
+                  <IconCross size={14} />
+                  <span>LOG OUT</span>
                 </button>
               )}
             </div>

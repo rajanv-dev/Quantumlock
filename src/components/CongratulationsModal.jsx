@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconCrown, IconTrophy, IconCross } from './CyberIcons';
 
 export const CongratulationsModal = ({
   isOpen,
@@ -80,12 +81,15 @@ export const CongratulationsModal = ({
             background: 'rgba(0, 255, 102, 0.15)',
             border: '2px solid var(--doom-green, #00ff66)',
             boxShadow: '0 0 30px rgba(0, 255, 102, 0.5)',
-            fontSize: '2.4rem',
             marginBottom: '1.2rem',
             animation: 'trophyBounce 1.2s ease infinite alternate'
           }}
         >
-          {isFinalSession ? '👑' : '🎉'}
+          {isFinalSession ? (
+            <IconCrown size={36} color="var(--doom-green)" />
+          ) : (
+            <IconTrophy size={36} color="var(--doom-green)" />
+          )}
         </div>
 
         <div style={{
@@ -191,10 +195,15 @@ export const CongratulationsModal = ({
                 borderColor: '#ff4466',
                 boxShadow: '0 0 25px rgba(255, 34, 68, 0.4)',
                 color: '#ffffff',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
               }}
             >
-              🚪 LOG OUT OF SESSION
+              <IconCross size={16} />
+              <span>LOG OUT OF SESSION</span>
             </button>
           )}
 
@@ -208,10 +217,15 @@ export const CongratulationsModal = ({
                   padding: '10px',
                   fontSize: '0.85rem',
                   borderColor: 'rgba(0, 229, 255, 0.4)',
-                  color: 'var(--doom-cyan, #00e5ff)'
+                  color: 'var(--doom-cyan, #00e5ff)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
                 }}
               >
-                🏆 VIEW LEADERBOARD
+                <IconTrophy size={15} />
+                <span>VIEW LEADERBOARD</span>
               </button>
             )}
 

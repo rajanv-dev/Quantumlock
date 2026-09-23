@@ -1,4 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
+import {
+  IconLightbulb,
+  IconVolume,
+  IconVolumeMute,
+  IconMic,
+  IconMicOff,
+  IconCross,
+  IconTerminal
+} from './CyberIcons';
+import { voiceManager } from '../utils/voiceManager';
 
 export const TopNav = ({
   timerString,
@@ -16,14 +26,26 @@ export const TopNav = ({
   onLogout,
   teamName,
 }) => {
+  const [voiceOn, setVoiceOn] = useState(() => voiceManager.isEnabled());
+
+  const handleToggleVoice = () => {
+    const next = voiceManager.toggle();
+    setVoiceOn(next);
+  };
+
   return (
     <header className="top-nav">
       <div className="top-nav__brand">
-        <span className="brand-mark__glyph">&#9670;</span>
-        <span>DOOM-OS // INTRUSION TRACE</span>
+        <IconTerminal size={14} color="var(--doom-gold-bright)" style={{ marginRight: '6px' }} />
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.9rem', color: '#E8F5EE', letterSpacing: '0.02em' }}>
+          AIDEX '26
+        </span>
+        <span style={{ fontSize: '0.8rem', color: '#9BAFA5', marginLeft: '6px' }}>
+          Mission Control
+        </span>
         {teamName && (
-          <span style={{ marginLeft: '10px', background: 'rgba(0,255,102,0.12)', border: '1px solid var(--doom-green)', padding: '2px 8px', borderRadius: '3px', color: 'var(--doom-green-bright)', fontSize: '0.72rem', fontFamily: 'var(--font-mono)' }}>
-            CALLSIGN: {teamName}
+          <span style={{ marginLeft: '12px', background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)', padding: '2px 8px', borderRadius: '4px', color: '#F0B429', fontSize: '0.72rem', fontFamily: 'var(--font-mono)' }}>
+            Callsign: {teamName}
           </span>
         )}
       </div>
@@ -31,19 +53,18 @@ export const TopNav = ({
       <div className={`top-nav__timer ${isWarning ? 'is-warning' : ''}`} id="topnav-timer">
         {sessionLabel && (
           <span style={{
-            fontSize: '0.68rem',
-            letterSpacing: '0.12em',
-            color: isWarning ? 'var(--doom-red-bright)' : 'var(--doom-green-bright)',
+            fontSize: '0.75rem',
+            letterSpacing: '0.03em',
+            color: isWarning ? '#FF4D5A' : '#9BAFA5',
             marginRight: '8px',
             fontFamily: 'var(--font-mono)',
-            fontWeight: 'bold',
-            opacity: 0.9
+            fontWeight: '600'
           }}>
-            {sessionLabel}:
+            Session {sessionLabel.replace(/SESSION\s*/i, '')}
           </span>
         )}
         <span className="top-nav__timer-value" id="game-countdown">
-          {isPaused ? `[PAUSED] ${timerString}` : (isExpired ? '00:00 [LOCKED]' : timerString)}
+          {isPaused ? `${timerString} (Paused)` : (isExpired ? '00:00 (Locked)' : timerString)}
         </span>
       </div>
 
@@ -56,34 +77,61 @@ export const TopNav = ({
           <button
             id="btn-open-hints-nav"
             className="btn btn--ghost btn--sm"
-            style={{ borderColor: 'rgba(255,170,0,0.45)', color: 'var(--doom-amber, #ffaa00)' }}
+            style={{ borderColor: 'rgba(240,180,41,0.4)', color: '#F0B429', display: 'inline-flex', alignItems: 'center', gap: '5px', textTransform: 'none', letterSpacing: '0.03em' }}
             title="Open Decryption Hints"
             onClick={onOpenHint}
           >
-            💡 HINTS
+            <IconLightbulb size={13} color="#F0B429" />
+            <span>Hints</span>
           </button>
         )}
-        <button id="btn-open-evidence" className="btn btn--ghost btn--sm" title="Open evidence database" onClick={onOpenEvidence}>
-          EVIDENCE <span className="badge" id="evidence-count" style={{ marginLeft: '4px', background: 'var(--doom-green-fog)', border: '1px solid var(--doom-green-dim)', padding: '1px 5px', borderRadius: '3px', fontSize: '0.7rem' }}>{evidenceCount}</span>
+        <button id="btn-open-evidence" className="btn btn--ghost btn--sm" style={{ textTransform: 'none', letterSpacing: '0.03em' }} title="Open evidence database" onClick={onOpenEvidence}>
+          Evidence <span className="badge" id="evidence-count" style={{ marginLeft: '4px', background: 'rgba(0,255,156,0.12)', border: '1px solid rgba(0,255,156,0.3)', color: '#00FF9C', padding: '1px 6px', borderRadius: '3px', fontSize: '0.7rem' }}>{evidenceCount}</span>
         </button>
+
+        <button
+          id="btn-voice-toggle-topnav"
+          type="button"
+          className="btn btn--ghost btn--sm"
+          style={{
+            borderColor: voiceOn ? 'var(--doom-cyan)' : 'rgba(255,255,255,0.15)',
+            color: voiceOn ? 'var(--doom-cyan)' : '#9BAFA5',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            textTransform: 'none',
+            letterSpacing: '0.03em'
+          }}
+          aria-pressed={voiceOn}
+          title={voiceOn ? "Disable voice announcements" : "Enable voice announcements"}
+          onClick={handleToggleVoice}
+        >
+          {voiceOn ? <IconMic size={13} color="var(--doom-cyan)" /> : <IconMicOff size={13} />}
+          <span>Voice</span>
+        </button>
+
         <button
           id="btn-sound-toggle-2"
           className="btn btn--ghost btn--sm"
           aria-pressed={soundOn}
           title="Toggle sound"
           onClick={onToggleSound}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', textTransform: 'none', letterSpacing: '0.03em' }}
         >
-          {soundOn ? 'SOUND ON' : 'SOUND OFF'}
+          {soundOn ? <IconVolume size={13} color="#00FF9C" /> : <IconVolumeMute size={13} />}
+          <span>Sound</span>
         </button>
+
         {onLogout && (
           <button
             id="btn-logout-nav"
             className="btn btn--ghost btn--sm"
-            style={{ borderColor: 'rgba(255, 34, 68, 0.4)', color: 'var(--doom-red, #ff2244)' }}
+            style={{ borderColor: 'rgba(255, 77, 90, 0.4)', color: '#FF4D5A', display: 'inline-flex', alignItems: 'center', gap: '5px', textTransform: 'none', letterSpacing: '0.03em' }}
             title="Sign out operative team"
             onClick={onLogout}
           >
-            🚪 LOGOUT
+            <IconCross size={12} color="#FF4D5A" />
+            <span>Log out</span>
           </button>
         )}
       </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconCheck, IconLock } from './CyberIcons';
 
 export const StageTracker = ({
   currentPartId = 1,
@@ -9,32 +10,36 @@ export const StageTracker = ({
   onOpenLevelSelect,
 }) => {
   return (
-    <nav className="stage-tracker" id="stage-tracker" aria-label="Mission levels" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <nav className="stage-tracker" id="stage-tracker" aria-label="Mission levels">
       <button
         onClick={onOpenLevelSelect}
         className="btn btn--ghost btn--sm"
         style={{
-          border: '1px solid var(--doom-green-dim)',
-          color: 'var(--doom-green)',
+          border: '1px solid rgba(212, 175, 55, 0.35)',
+          color: '#F0B429',
+          background: 'rgba(212, 175, 55, 0.08)',
           fontSize: '11px',
-          letterSpacing: '1px',
+          letterSpacing: '0.03em',
           padding: '4px 10px',
           display: 'flex',
           alignItems: 'center',
-          gap: '6px'
+          gap: '5px',
+          flexShrink: 0,
+          borderRadius: '4px',
+          textTransform: 'none'
         }}
         title="Open Level Selection"
       >
-        <span>SESSION {currentPartId} (LEVELS {currentPartId === 1 ? '01–15' : '16–30'})</span>
-        <span style={{ fontSize: '10px' }}>▼</span>
+        <span>Session {currentPartId} ({currentPartId === 1 ? '01–15' : '16–30'})</span>
+        <span style={{ fontSize: '9px', opacity: 0.7 }}>▼</span>
       </button>
 
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none', alignItems: 'center' }}>
         {levels.map((lvl, idx) => {
           const isDone = solvedPuzzles.includes(lvl.key);
           const isCurrent = idx === currentLevelIndex;
           const isUnlocked = idx === 0 || solvedPuzzles.includes(levels[idx - 1]?.key);
-          
+
           let pillClass = 'stage-pill';
           if (isDone) pillClass += ' is-done';
           if (isCurrent) pillClass += ' is-current';
@@ -47,28 +52,17 @@ export const StageTracker = ({
               className={pillClass}
               disabled={!isUnlocked}
               onClick={() => isUnlocked && onSelectLevel && onSelectLevel(idx)}
-              style={{
-                cursor: isUnlocked ? 'pointer' : 'not-allowed',
-                opacity: isUnlocked ? 1 : 0.4,
-                background: isCurrent ? 'rgba(0,255,102,0.18)' : isDone ? 'rgba(0,255,102,0.1)' : 'rgba(255,255,255,0.03)',
-                borderColor: isCurrent ? 'var(--doom-green)' : isDone ? 'rgba(0,255,102,0.4)' : isUnlocked ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)',
-                color: isDone ? 'var(--doom-green)' : isCurrent ? '#fff' : isUnlocked ? 'var(--ink)' : 'var(--ink-faint)',
-                padding: '5px 12px',
-                borderRadius: '4px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                letterSpacing: '0.05em',
-                transition: 'all 0.2s ease'
-              }}
               title={
                 isDone
                   ? `Level ${lvl.id} Cleared: ${lvl.name}`
                   : isUnlocked
-                  ? `Go to Level ${lvl.id}: ${lvl.name}`
-                  : `Level ${lvl.id} is LOCKED — Solve Level ${lvl.id - 1} first`
+                    ? `Go to Level ${lvl.id}: ${lvl.name}`
+                    : `Level ${lvl.id} is Locked — Solve Level ${lvl.id - 1} first`
               }
             >
-              LEVEL {lvl.id} {lvl.id === 30 ? '— FINALE' : ''} {isDone ? ' ✓' : isUnlocked ? '' : ' 🔒'}
+              <span>{String(lvl.id).padStart(2, '0')}</span>
+              {isDone && <IconCheck size={10} color="#00FF9C" />}
+              {!isUnlocked && !isDone && <IconLock size={10} color="#718078" />}
             </button>
           );
         })}

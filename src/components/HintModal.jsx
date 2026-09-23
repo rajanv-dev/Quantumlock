@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { SoundManager } from '../utils/soundManager';
+import { IconAlert, IconCheck, IconCross } from './CyberIcons';
 
 export const HintModal = ({ isOpen, stage, hintsUsed = {}, onRevealHint, onClose }) => {
   // Close on ESC key
@@ -108,9 +109,9 @@ export const HintModal = ({ isOpen, stage, hintsUsed = {}, onRevealHint, onClose
             type="button"
             className="btn btn--ghost btn--sm"
             onClick={onClose}
-            style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+            style={{ padding: '4px 10px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}
           >
-            ✕
+            <IconCross size={13} />
           </button>
         </div>
 
@@ -128,8 +129,9 @@ export const HintModal = ({ isOpen, stage, hintsUsed = {}, onRevealHint, onClose
               borderRadius: '6px',
             }}
           >
-            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--ink-dim)', fontFamily: 'var(--font-mono)' }}>
-              ⚠ Revealing classified intel reduces <strong>individual timer countdown</strong> and <strong>chamber score</strong> (Base: 20 pts).
+            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--ink-dim)', fontFamily: 'var(--font-mono)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <IconAlert size={14} color="var(--doom-amber)" />
+              <span>Revealing classified intel reduces <strong>individual timer countdown</strong> and <strong>chamber score</strong> (Base: 20 pts).</span>
             </p>
             {totalPenalty > 0 && (
               <span
@@ -206,9 +208,12 @@ export const HintModal = ({ isOpen, stage, hintsUsed = {}, onRevealHint, onClose
                             color: 'var(--doom-green-bright)',
                             fontFamily: 'var(--font-mono)',
                             fontWeight: 'bold',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
                           }}
                         >
-                          ✓ DECRYPTED
+                          <IconCheck size={11} color="var(--doom-green-bright)" /> DECRYPTED
                         </span>
                       )}
                     </div>
@@ -234,9 +239,13 @@ export const HintModal = ({ isOpen, stage, hintsUsed = {}, onRevealHint, onClose
                       borderRadius: '4px',
                       color: '#ff8899',
                       fontSize: '0.72rem',
-                      fontFamily: 'var(--font-mono)'
+                      fontFamily: 'var(--font-mono)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
                     }}>
-                      ⚠ CRITICAL: Revealing Hint 3 gives the exact answer. Using 3 hints awards ZERO (0) points for this chamber!
+                      <IconAlert size={14} color="#ff3355" />
+                      <span>CRITICAL: Revealing Hint 3 gives the exact answer. Using 3 hints awards ZERO (0) points for this chamber!</span>
                     </div>
                   )}
 
@@ -275,7 +284,7 @@ export const HintModal = ({ isOpen, stage, hintsUsed = {}, onRevealHint, onClose
                         }}
                         style={{ padding: '6px 14px', fontSize: '0.75rem', flexShrink: 0 }}
                       >
-                        ⚡ DECRYPT ({penaltyLabel})
+                        DECRYPT ({penaltyLabel})
                       </button>
                     </div>
                   )}

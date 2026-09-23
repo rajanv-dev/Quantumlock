@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { IconLock, IconCheck, IconCross, IconAlert, IconLightbulb } from '../CyberIcons';
 
 const DOOM_TAUNTS = [
-  "WRONG KEY — Your override attempt has been logged and discarded.",
-  "ACCESS DENIED — The Singularity Core rejects that transmission.",
-  "AUTHENTICATION FAILED — Recalibrate your calculations and retry.",
-  "INCORRECT SIGNAL — Calculation mismatch. Re-verify your systems parameters.",
-  "TRANSMISSION REJECTED — Recheck your methodology, not your guesses.",
-  "FIREWALL HOLDS — That response failed system validation checks.",
+  "Incorrect key. Verify calculations and retry.",
+  "Access denied. Recalibrate input parameters.",
+  "Authentication failed. Validation check mismatched.",
+  "Transmission rejected. Recheck your methodology.",
 ];
 
 export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSubmitAnswer, onRequestHint }) => {
   const [answer, setAnswer] = useState(initialInput || '');
-  const [feedback, setFeedback] = useState(stage?.isSolved ? { message: 'BREACH CONFIRMED. PROTOCOL OVERRIDDEN.', isGranted: true } : null);
+  const [feedback, setFeedback] = useState(stage?.isSolved ? { message: 'Protocol override confirmed.', isGranted: true } : null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [focusActive, setFocusActive] = useState(false);
   const [shaking, setShaking] = useState(false);
@@ -31,9 +30,9 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
     setPotentialPoints(stage?.potentialPoints !== undefined ? stage.potentialPoints : (locked ? 0 : 20));
 
     if (stage?.isSolved) {
-      setFeedback({ message: 'BREACH CONFIRMED. PROTOCOL OVERRIDDEN.', isGranted: true });
+      setFeedback({ message: 'Protocol override confirmed.', isGranted: true });
     } else if (locked) {
-      setFeedback({ message: 'CHAMBER LOCKED: 2 of 2 wrong attempts used. 0 points awarded.', isGranted: false });
+      setFeedback({ message: 'Chamber locked: 2 of 2 wrong attempts used.', isGranted: false });
     } else {
       setFeedback(null);
     }
@@ -69,7 +68,7 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
     setIsSubmitting(false);
 
     if (res.success) {
-      setFeedback({ message: res.successNote || 'BREACH CONFIRMED.', isGranted: true });
+      setFeedback({ message: res.successNote || 'Protocol override confirmed.', isGranted: true });
       setAttemptsRemaining(0);
       setIsLocked(false);
     } else {
@@ -103,23 +102,30 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
       <div className="pc-header">
         <div className="pc-header__left">
           <div className={`pc-status-orb ${feedback?.isGranted ? 'pc-status-orb--granted' : (isTimeExpired || isLocked) ? 'pc-status-orb--denied' : feedback?.isGranted === false ? 'pc-status-orb--denied' : 'pc-status-orb--active'}`} />
-          <span className="pc-header__label">OVERRIDE CONSOLE // DOOM-OS</span>
+          <span className="pc-header__label" style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: '700', color: '#E8F5EE', letterSpacing: 'normal' }}>
+            Override Console
+          </span>
+          <span style={{ fontSize: '0.75rem', color: '#718078', marginLeft: '6px' }}>Doom OS</span>
         </div>
         <div className="pc-header__right">
-          <span className="pc-header__level">LVL-{String(stage.id).padStart(2, '0')} ∙ SESSION {stage.id <= 15 ? 1 : 2}</span>
+          <span className="pc-header__level" style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: '#9BAFA5', letterSpacing: 'normal' }}>
+            Level {String(stage.id).padStart(2, '0')} · Session {stage.id <= 15 ? 1 : 2}
+          </span>
           {feedback?.isGranted ? (
-            <span className="pc-status-tag pc-status-tag--breached">● BREACHED</span>
+            <span className="pc-status-tag pc-status-tag--breached" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'none' }}>
+              <IconCheck size={12} color="#00FF9C" /> Breached
+            </span>
           ) : isLocked ? (
-            <span className="pc-status-tag" style={{ background: 'rgba(255, 34, 68, 0.25)', color: 'var(--doom-red, #ff2244)', borderColor: 'var(--doom-red, #ff2244)' }}>
-              🔒 0/2 CHANCES (LOCKED)
+            <span className="pc-status-tag" style={{ background: 'rgba(255, 77, 90, 0.15)', color: '#FF4D5A', borderColor: '#FF4D5A', display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'none' }}>
+              <IconLock size={12} color="#FF4D5A" /> 0 of 2 attempts (Locked)
             </span>
           ) : isTimeExpired ? (
-            <span className="pc-status-tag" style={{ background: 'rgba(255, 34, 68, 0.2)', color: 'var(--doom-red, #ff2244)', borderColor: 'var(--doom-red, #ff2244)' }}>
-              ● TIMED OUT
+            <span className="pc-status-tag" style={{ background: 'rgba(255, 77, 90, 0.15)', color: '#FF4D5A', borderColor: '#FF4D5A', textTransform: 'none' }}>
+              Timed out
             </span>
           ) : (
-            <span className="pc-status-tag pc-status-tag--locked">
-              ● {attemptsRemaining}/2 CHANCES REMAINING
+            <span className="pc-status-tag pc-status-tag--locked" style={{ textTransform: 'none' }}>
+              {attemptsRemaining} of 2 attempts remaining
             </span>
           )}
         </div>
@@ -131,41 +137,40 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '10px 18px',
-        background: isLocked
-          ? 'linear-gradient(90deg, rgba(255, 34, 68, 0.15), rgba(20, 5, 8, 0.6))'
-          : feedback?.isGranted
-          ? 'linear-gradient(90deg, rgba(0, 255, 102, 0.12), rgba(5, 25, 15, 0.6))'
-          : 'linear-gradient(90deg, rgba(0, 255, 102, 0.05), rgba(0, 229, 255, 0.04))',
+        background: 'rgba(5, 15, 10, 0.4)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        fontFamily: 'var(--font-mono)',
-        fontSize: '0.78rem',
+        fontFamily: 'var(--font-body)',
+        fontSize: '0.85rem',
         flexWrap: 'wrap',
         gap: '8px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ color: 'var(--ink-faint, #6e8a7c)' }}>REWARD VALUE:</span>
+          <span style={{ color: '#9BAFA5' }}>Score:</span>
           {isLocked ? (
-            <span style={{ color: 'var(--doom-red, #ff2244)', fontWeight: 'bold' }}>0 PTS (CHAMBER FAILED)</span>
+            <span style={{ color: '#FF4D5A', fontWeight: '600' }}>0 pts (Chamber Locked)</span>
           ) : feedback?.isGranted ? (
-            <span style={{ color: 'var(--doom-green-bright, #00ff66)', fontWeight: 'bold' }}>✓ EARNED {livePotential} PTS</span>
+            <span style={{ color: '#00FF9C', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <IconCheck size={13} color="#00FF9C" /> Earned {livePotential} pts
+            </span>
           ) : (
-            <span style={{ color: 'var(--doom-green-bright, #00ff66)', fontWeight: 'bold' }}>
-              {livePotential} / 20 PTS {hintDeduction > 0 && `(−${hintDeduction} hints)`} {attemptPenalty > 0 && `(−${attemptPenalty} wrong)`}
+            <span style={{ color: '#00FF9C', fontWeight: '600' }}>
+              {livePotential} / 20 pts {hintDeduction > 0 && `(−${hintDeduction} hints)`} {attemptPenalty > 0 && `(−${attemptPenalty} wrong)`}
             </span>
           )}
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ color: 'var(--ink-faint, #6e8a7c)' }}>SUBMISSION CHANCES:</span>
+          <span style={{ color: '#9BAFA5' }}>Attempts:</span>
           <span style={{
             padding: '2px 8px',
             borderRadius: '4px',
-            fontWeight: 'bold',
-            background: isLocked ? 'rgba(255, 34, 68, 0.2)' : attemptsRemaining === 1 ? 'rgba(255, 170, 0, 0.2)' : 'rgba(0, 255, 102, 0.15)',
-            color: isLocked ? 'var(--doom-red, #ff2244)' : attemptsRemaining === 1 ? 'var(--doom-amber, #ffaa00)' : 'var(--doom-green-bright, #00ff66)',
-            border: `1px solid ${isLocked ? 'var(--doom-red)' : attemptsRemaining === 1 ? 'var(--doom-amber)' : 'var(--doom-green)'}`
+            fontWeight: '600',
+            fontSize: '0.8rem',
+            background: isLocked ? 'rgba(255, 77, 90, 0.15)' : attemptsRemaining === 1 ? 'rgba(240, 180, 41, 0.15)' : 'rgba(0, 255, 156, 0.12)',
+            color: isLocked ? '#FF4D5A' : attemptsRemaining === 1 ? '#F0B429' : '#00FF9C',
+            border: `1px solid ${isLocked ? '#FF4D5A' : attemptsRemaining === 1 ? '#F0B429' : 'rgba(0,255,156,0.3)'}`
           }}>
-            {isLocked ? '0 / 2 (LOCKED)' : feedback?.isGranted ? 'CLEARED' : `${attemptsRemaining} / 2 AVAILABLE`}
+            {isLocked ? '0 of 2 remaining' : feedback?.isGranted ? 'Cleared' : `${attemptsRemaining} of 2 remaining`}
           </span>
         </div>
       </div>
@@ -173,11 +178,11 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
       {/* ─── ANSWER FORM ─── */}
       <div className="pc-form-area">
         <form onSubmit={handleSubmit}>
-          <label className={`pc-form-label ${focusActive ? 'pc-form-label--active' : ''}`} htmlFor="pc-answer-input">
-            ▸ TRANSMIT OVERRIDE KEY:
+          <label className={`pc-form-label ${focusActive ? 'pc-form-label--active' : ''}`} htmlFor="pc-answer-input" style={{ textTransform: 'none', letterSpacing: 'normal', fontSize: '0.9rem', color: '#E8F5EE' }}>
+            Transmit Override Key
           </label>
 
-          <div className="pc-input-row">
+          <div className="pc-input-row" style={{ marginTop: '6px' }}>
             <div className="pc-input-wrap">
               <input
                 id="pc-answer-input"
@@ -187,10 +192,10 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
                 spellCheck="false"
                 placeholder={
                   isLocked
-                    ? "MAX ATTEMPTS REACHED (2/2 WRONG) — CHAMBER INPUTS PERMANENTLY LOCKED"
+                    ? "Max attempts reached — terminal locked"
                     : isTimeExpired && !feedback?.isGranted
-                    ? "COUNTDOWN REACHED ZERO — OVERRIDE TERMINAL LOCKED"
-                    : "Enter your calculated answer..."
+                      ? "Time expired — terminal locked"
+                      : "Enter override key..."
                 }
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
@@ -198,9 +203,12 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
                 onBlur={() => setFocusActive(false)}
                 disabled={feedback?.isGranted || isSubmitting || (isTimeExpired && !feedback?.isGranted) || isLocked}
                 className={`pc-input ${focusActive ? 'pc-input--focused' : ''} ${(feedback?.isGranted === false || isLocked || (isTimeExpired && !feedback?.isGranted)) ? 'pc-input--error' : ''} ${feedback?.isGranted ? 'pc-input--success' : ''}`}
+                style={{ letterSpacing: 'normal', textTransform: 'none', fontSize: '0.95rem' }}
               />
               {feedback?.isGranted && (
-                <span className="pc-input-checkmark">✓</span>
+                <span className="pc-input-checkmark">
+                  <IconCheck size={14} color="#00FF9C" />
+                </span>
               )}
             </div>
 
@@ -209,17 +217,18 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
               className={`pc-submit-btn ${isSubmitting ? 'pc-submit-btn--loading' : ''} ${feedback?.isGranted ? 'pc-submit-btn--success' : ''}`}
               disabled={feedback?.isGranted || isSubmitting || !answer.trim() || (isTimeExpired && !feedback?.isGranted) || isLocked}
               id="btn-submit-answer"
+              style={{ textTransform: 'none', letterSpacing: '0.03em', fontSize: '0.9rem' }}
             >
               {isSubmitting ? (
-                <span className="pc-submit-btn__spinner">▌</span>
+                <span>Submitting...</span>
               ) : feedback?.isGranted ? (
-                '✓ BREACHED'
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><IconCheck size={13} /> Breached</span>
               ) : isLocked ? (
-                '🔒 LOCKED (0/2)'
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><IconLock size={13} /> Locked</span>
               ) : isTimeExpired ? (
-                '🔒 TIME EXPIRED'
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><IconLock size={13} /> Time Expired</span>
               ) : (
-                <>⚡ TRANSMIT KEY</>
+                <>Transmit Key</>
               )}
             </button>
           </div>
@@ -233,54 +242,54 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
               onClick={onRequestHint}
               disabled={feedback?.isGranted || isTimeExpired || isLocked}
               style={{
-                background: 'linear-gradient(135deg, rgba(255, 170, 0, 0.18), rgba(255, 170, 0, 0.06))',
-                border: '1px solid var(--doom-amber, #ffaa00)',
-                color: 'var(--doom-amber, #ffaa00)',
+                background: 'rgba(240, 180, 41, 0.1)',
+                border: '1px solid rgba(240, 180, 41, 0.4)',
+                color: '#F0B429',
                 borderRadius: '6px',
-                padding: '8px 16px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.82rem',
-                fontWeight: 'bold',
-                letterSpacing: '0.08em',
+                padding: '7px 14px',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                letterSpacing: '0.02em',
+                textTransform: 'none',
                 cursor: (feedback?.isGranted || isTimeExpired || isLocked) ? 'not-allowed' : 'pointer',
                 opacity: (feedback?.isGranted || isTimeExpired || isLocked) ? 0.5 : 1,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 0 15px rgba(255, 170, 0, 0.2)',
+                gap: '6px',
                 transition: 'all 0.2s ease',
               }}
             >
-              <span style={{ fontSize: '1rem' }}>💡</span>
-              <span>REQUEST HINT / INTEL DECRYPTION</span>
+              <IconLightbulb size={15} color="#F0B429" />
+              <span>Request Hint</span>
             </button>
             {totalPenalty > 0 || hintDeduction > 0 ? (
-              <span className="pc-penalty" style={{ color: 'var(--doom-red, #ff2244)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                ⚠ HINT PENALTY ACTIVE: −{totalPenalty}s timer / −{hintDeduction} pts score
+              <span className="pc-penalty" style={{ color: '#FF4D5A', fontFamily: 'var(--font-body)', fontSize: '0.8rem', fontWeight: '500', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <IconAlert size={14} color="#FF4D5A" /> Hint penalty: −{totalPenalty}s / −{hintDeduction} pts
               </span>
             ) : (
-              <span style={{ color: 'var(--ink-faint, #6e8a7c)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
-                (Base: 20 pts ∙ Hint 1: −3 pts ∙ Hint 2: −5 pts ∙ Wrong: −2 pts & 1 chance)
+              <span style={{ color: '#718078', fontFamily: 'var(--font-body)', fontSize: '0.78rem' }}>
+                Base: 20 pts · Hint 1: −3 pts · Hint 2: −5 pts · Wrong: −2 pts & 1 attempt
               </span>
             )}
           </div>
 
           {/* ─── LOCKED OUT BANNER ─── */}
           {isLocked && !feedback?.isGranted && (
-            <div className="pc-feedback pc-feedback--error" style={{ marginTop: '14px', borderColor: 'var(--doom-red)' }} role="alert">
-              <span className="pc-feedback__icon">🔒</span>
+            <div className="pc-feedback pc-feedback--error" style={{ marginTop: '14px', borderColor: '#FF4D5A' }} role="alert">
+              <span className="pc-feedback__icon"><IconLock size={18} color="#FF4D5A" /></span>
               <span className="pc-feedback__msg">
-                MAX ATTEMPTS REACHED (2/2 WRONG): Chamber override inputs are permanently locked. 0 points awarded.
+                Max attempts reached (2 of 2 wrong attempts). Override terminal locked.
               </span>
             </div>
           )}
 
           {/* ─── TIME EXPIRED BANNER ─── */}
           {isTimeExpired && !feedback?.isGranted && !isLocked && (
-            <div className="pc-feedback pc-feedback--error" style={{ marginTop: '14px', borderColor: 'var(--doom-red)' }} role="alert">
-              <span className="pc-feedback__icon">💀</span>
+            <div className="pc-feedback pc-feedback--error" style={{ marginTop: '14px', borderColor: '#FF4D5A' }} role="alert">
+              <span className="pc-feedback__icon"><IconAlert size={18} color="#FF4D5A" /></span>
               <span className="pc-feedback__msg">
-                DOOMSDAY PROTOCOL ACTIVATED: Countdown reached zero. Chamber override inputs are locked.
+                Time expired. The override terminal is locked.
               </span>
             </div>
           )}
@@ -288,7 +297,9 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
           {/* ─── FEEDBACK PANEL ─── */}
           {feedback && (!isTimeExpired || feedback.isGranted) && (
             <div className={`pc-feedback ${feedback.isGranted ? 'pc-feedback--success' : 'pc-feedback--error'}`} role="status">
-              <span className="pc-feedback__icon">{feedback.isGranted ? '✓' : '✗'}</span>
+              <span className="pc-feedback__icon">
+                {feedback.isGranted ? <IconCheck size={18} color="#00FF9C" /> : <IconCross size={18} color="#FF4D5A" />}
+              </span>
               <span className="pc-feedback__msg">{feedback.message}</span>
             </div>
           )}

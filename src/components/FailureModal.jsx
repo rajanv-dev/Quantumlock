@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconAlert, IconTrophy } from './CyberIcons';
 
 export const FailureModal = ({ isOpen, onRestart, onDismiss, onViewLeaderboard }) => {
   if (!isOpen) return null;
@@ -44,13 +45,12 @@ export const FailureModal = ({ isOpen, onRestart, onDismiss, onViewLeaderboard }
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '28px',
             margin: '0 auto 1.2rem',
             boxShadow: '0 0 25px rgba(255, 34, 68, 0.5)',
             animation: 'timerFlash 1.5s ease-in-out infinite',
           }}
         >
-          💀
+          <IconAlert size={30} color="var(--doom-red)" />
         </div>
 
         <p
@@ -97,9 +97,10 @@ export const FailureModal = ({ isOpen, onRestart, onDismiss, onViewLeaderboard }
               type="button"
               className="btn btn--primary btn--lg btn--charge"
               onClick={onViewLeaderboard}
-              style={{ width: '100%', justifyContent: 'center' }}
+              style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '8px' }}
             >
-              🏆 VIEW LIVE LEADERBOARD & SCORES
+              <IconTrophy size={16} />
+              <span>VIEW LIVE LEADERBOARD & SCORES</span>
             </button>
           )}
 
@@ -110,7 +111,7 @@ export const FailureModal = ({ isOpen, onRestart, onDismiss, onViewLeaderboard }
               onClick={onRestart}
               style={{ width: '100%', justifyContent: 'center' }}
             >
-              ⚡ LEADERBOARD & RANKINGS
+              LEADERBOARD & RANKINGS
             </button>
           )}
 

@@ -26,31 +26,31 @@ export function InvestigationJournal({ isOpen, onClose, currentStage, evidenceLi
           </button>
         </div>
 
-        {/* Tab Navigation */}
+        {/* Navigation Tabs */}
         <div className="journal-tabs">
           <button
             className={`journal-tab-btn ${activeTab === 'code' ? 'journal-tab-btn--active' : ''}`}
             onClick={() => setActiveTab('code')}
           >
-            💻 CODE & LOGIC SNIPPET
+            CODE & LOGIC SNIPPET
           </button>
           <button
             className={`journal-tab-btn ${activeTab === 'evidence' ? 'journal-tab-btn--active' : ''}`}
             onClick={() => setActiveTab('evidence')}
           >
-            📁 EVIDENCE REPOSITORY ({evidenceList.length})
+            EVIDENCE REPOSITORY ({evidenceList.length})
           </button>
           <button
             className={`journal-tab-btn ${activeTab === 'dialogues' ? 'journal-tab-btn--active' : ''}`}
             onClick={() => setActiveTab('dialogues')}
           >
-            📡 INTERCEPTED TRANSMISSIONS
+            INTERCEPTED TRANSMISSIONS
           </button>
           <button
             className={`journal-tab-btn ${activeTab === 'contradictions' ? 'journal-tab-btn--active' : ''}`}
             onClick={() => setActiveTab('contradictions')}
           >
-            ⚠️ CONTRADICTION MATRIX
+            CONTRADICTION MATRIX
           </button>
         </div>
 
@@ -69,7 +69,7 @@ export function InvestigationJournal({ isOpen, onClose, currentStage, evidenceLi
                   </p>
 
                   <div className="journal-evidence-box">
-                    <span className="journal-box-label">💻 ACTIVE CODE & LOGIC EXECUTION TRACE:</span>
+                    <span className="journal-box-label">ACTIVE CODE & LOGIC EXECUTION TRACE:</span>
                     {codeLines.length > 0 ? (
                       <div style={{
                         background: 'rgba(2, 8, 4, 0.95)',
@@ -142,11 +142,11 @@ export function InvestigationJournal({ isOpen, onClose, currentStage, evidenceLi
               {currentStage?.investigationClues && (
                 <div className="journal-clues-grid">
                   <div className="journal-clue-item">
-                    <h5>🔍 Methodology Directive</h5>
+                    <h5>Methodology Directive</h5>
                     <p>{currentStage.investigationClues.hint}</p>
                   </div>
                   <div className="journal-clue-item">
-                    <h5>🛡️ System Vulnerability Vector</h5>
+                    <h5>System Vulnerability Vector</h5>
                     <p>{currentStage.investigationClues.concept}</p>
                   </div>
                 </div>
@@ -185,7 +185,7 @@ export function InvestigationJournal({ isOpen, onClose, currentStage, evidenceLi
           {activeTab === 'contradictions' && (
             <div className="journal-section">
               <div className="journal-contradiction-banner">
-                <h4>🎯 DOOM TACTICAL DECEPTION DETECTOR</h4>
+                <h4>TACTICAL DECEPTION DETECTOR</h4>
                 <p>
                   DOOM will deliberately broadcast false telemetry to misdirect investigators. When you spot a statement that contradicts verified terminal logs, flag it to weaken his subroutines.
                 </p>
@@ -196,8 +196,8 @@ export function InvestigationJournal({ isOpen, onClose, currentStage, evidenceLi
                   <div className="contradiction-header">
                     <span className="contradiction-status">
                       {narrativeState?.contradictionsDetected?.includes(levelDialogueData.lie.contradictionKey)
-                        ? '✅ CONTRADICTION EXPOSED'
-                        : '⚠️ SUSPICIOUS TELEMETRY DETECTED'}
+                        ? '[CONTRADICTION EXPOSED]'
+                        : '[SUSPICIOUS TELEMETRY DETECTED]'}
                     </span>
                   </div>
                   <p className="contradiction-statement">{levelDialogueData.lie.statement}</p>
@@ -208,7 +208,7 @@ export function InvestigationJournal({ isOpen, onClose, currentStage, evidenceLi
                       className="btn btn--charge journal-flag-btn"
                       onClick={() => onFlagContradiction(levelDialogueData.lie.contradictionKey)}
                     >
-                      ⚡ FLAG AS CONTRADICTION / LIE
+                      FLAG AS CONTRADICTION / ANOMALY
                     </button>
                   )}
                 </div>

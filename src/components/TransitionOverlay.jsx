@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { SoundManager } from '../utils/soundManager';
+import { IconCheck } from './CyberIcons';
 
 export const TransitionOverlay = ({
   isActive,
@@ -170,7 +171,7 @@ export const TransitionOverlay = ({
         <div className="cinematic-body">
           {/* Previous Room Cleared Tag */}
           <div className="cinematic-cleared-tag">
-            <span className="cinematic-cleared-icon">✓</span>
+            <IconCheck size={14} color="var(--doom-green)" className="cinematic-cleared-icon" />
             <span>CLEARED: {fromRoom.toUpperCase()}</span>
           </div>
 
@@ -178,7 +179,7 @@ export const TransitionOverlay = ({
           <div className="cinematic-heading-group">
             <div className="cinematic-eyebrow">
               <span className="cinematic-eyebrow-accent">
-                ⚡ {isSessionComplete ? 'FINAL EVALUATION' : `ENTER CHAMBER ${String(toLevelNumber).padStart(2, '0')} / 30`}
+                {isSessionComplete ? 'FINAL EVALUATION' : `ENTER CHAMBER ${String(toLevelNumber).padStart(2, '0')} / 30`}
               </span>
               <span className="cinematic-eyebrow-cat">[{toCategory.toUpperCase()}]</span>
             </div>
