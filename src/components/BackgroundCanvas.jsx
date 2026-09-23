@@ -1,32 +1,19 @@
 import React from 'react';
+import loginBackground from '../../assets/images/loginppage.png';
 
 export const BackgroundCanvas = () => {
   return (
-    <div className="global-doom-backdrop" aria-hidden="true" style={{ pointerEvents: 'none' }}>
-      {/* Static Website Background Image */}
+    <div className="game-background-container" aria-hidden="true">
       <div
-        className="global-doom-artwork"
+        className="static-background"
         style={{
-          backgroundImage: "url('/images/loginppage.png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
-          position: 'absolute',
-          inset: 0,
-          transform: 'none',
-          animation: 'none'
+          backgroundImage: `url(${loginBackground})`
         }}
       />
-      {/* Subtle dark overlay for contrast */}
-      <div
-        className="global-doom-layer global-doom-layer--grade"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'rgba(0, 8, 7, 0.15)',
-          pointerEvents: 'none'
-        }}
-      />
+      <div className="game-background-overlay" />
     </div>
   );
 };
+
+
+

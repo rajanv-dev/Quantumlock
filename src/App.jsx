@@ -19,6 +19,7 @@ import { FinalSequence } from './components/FinalSequence';
 import { ResultsScreen } from './components/ResultsScreen';
 import { AdminPanel } from './components/admin/AdminPanel';
 import { CommandAuthModal } from './components/CommandAuthModal';
+import { VideoIntro } from './components/VideoIntro';
 
 import { TerminalWidget } from './components/widgets/TerminalWidget';
 import { SignalWidget } from './components/widgets/SignalWidget';
@@ -39,6 +40,7 @@ const TEAM_NAME_KEY = 'AIDEX_TEAM_NAME_V1';
 export default function App() {
   const [participantToken, setParticipantToken] = useState(() => localStorage.getItem(TOKEN_KEY) || null);
   const [teamName, setTeamName] = useState(() => localStorage.getItem(TEAM_NAME_KEY) || '');
+  const [showVideoIntro, setShowVideoIntro] = useState(false);
   const [eventState, setEventState] = useState({ status: 'CLOSED', active_session: 0 });
   const [sessionStats, setSessionStats] = useState({});
   const [currentQuestions, setCurrentQuestions] = useState([]);
@@ -350,6 +352,7 @@ export default function App() {
         setParticipantToken(data.participant.token);
         setTeamName(data.participant.teamName);
         setEventState(data.eventState);
+        setShowVideoIntro(true);
         SoundManager.play('success', soundOn);
         voiceManager.speakAccessGranted();
         await syncServerState();
@@ -376,6 +379,7 @@ export default function App() {
         setParticipantToken(data.participant.token);
         setTeamName(data.participant.teamName);
         setEventState(data.eventState);
+        setShowVideoIntro(true);
         SoundManager.play('success', soundOn);
         voiceManager.speakAccessGranted();
         await syncServerState();
@@ -420,6 +424,7 @@ export default function App() {
     localStorage.removeItem(TEAM_NAME_KEY);
     hasInitializedQuestionIndexRef.current = false;
     lastSessionNumberRef.current = null;
+    setShowVideoIntro(false);
     setParticipantToken(null);
     setTeamName('');
     setCurrentQuestions([]);
@@ -634,6 +639,13 @@ export default function App() {
         <AdminPanel isOpen={adminOpen} onClose={() => setAdminOpen(false)} adminToken={adminAuthToken || 'robin123'} />
         <LeaderboardModal isOpen={leaderboardOpen} onClose={() => setLeaderboardOpen(false)} />
       </div>
+    );
+  }
+
+  // Gate 1.5: Full-screen Single-Play Video Intro state right after successful login
+  if (showVideoIntro) {
+    return (
+      <VideoIntro onEnded={() => setShowVideoIntro(false)} />
     );
   }
 
