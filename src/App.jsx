@@ -11,11 +11,9 @@ import { StageTracker } from './components/StageTracker';
 import { DoomQuestionHeader } from './components/DoomQuestionHeader';
 import { DoomDialogueOverlay } from './components/DoomDialogueOverlay';
 import InvestigationJournal from './components/InvestigationJournal';
-import DoomCinematicEvent from './components/DoomCinematicEvent';
 import { HintModal } from './components/HintModal';
 import { FailureModal } from './components/FailureModal';
 import { CongratulationsModal } from './components/CongratulationsModal';
-import { FinalSequence } from './components/FinalSequence';
 import { ResultsScreen } from './components/ResultsScreen';
 import { AdminPanel } from './components/admin/AdminPanel';
 import { CommandAuthModal } from './components/CommandAuthModal';
@@ -31,7 +29,6 @@ import { PuzzleCard } from './components/widgets/PuzzleCard';
 import { narrativeEngine } from './engine/narrativeEngine';
 import { SoundManager } from './utils/soundManager';
 import { timerSynchronizer } from './utils/timerSync';
-import { voiceManager } from './utils/voiceManager';
 import { IconCheck, IconTerminal } from './components/CyberIcons';
 
 const TOKEN_KEY = 'AIDEX_PARTICIPANT_TOKEN_V1';
@@ -73,23 +70,6 @@ export default function App() {
   const [revealedParas, setRevealedParas] = useState(1);
   const currentQuestion = currentQuestions[activeQuestionIndex] || currentQuestions[0] || null;
   const currentSessionNumber = eventState.active_session || 1;
-
-  // Voice announcement triggers
-  const hasSpokenWarningRef = useRef(false);
-  useEffect(() => {
-    if (remainingTime <= 300 && remainingTime > 0 && !hasSpokenWarningRef.current) {
-      hasSpokenWarningRef.current = true;
-      voiceManager.speakTimeWarning();
-    } else if (remainingTime > 300) {
-      hasSpokenWarningRef.current = false;
-    }
-  }, [remainingTime]);
-
-  useEffect(() => {
-    if (congratsModalOpen) {
-      voiceManager.speakMissionCompleted();
-    }
-  }, [congratsModalOpen]);
 
   // Helper to ensure window & container scroll to top immediately
   const scrollToTop = () => {
@@ -354,7 +334,6 @@ export default function App() {
         setEventState(data.eventState);
         setShowVideoIntro(true);
         SoundManager.play('success', soundOn);
-        voiceManager.speakAccessGranted();
         await syncServerState();
         return { success: true };
       } else {
@@ -381,7 +360,6 @@ export default function App() {
         setEventState(data.eventState);
         setShowVideoIntro(true);
         SoundManager.play('success', soundOn);
-        voiceManager.speakAccessGranted();
         await syncServerState();
         return { success: true };
       } else {
@@ -413,9 +391,6 @@ export default function App() {
       targetIndex: targetIndex,
       isSessionComplete: options.isSessionComplete || false
     });
-    if (targetQ) {
-      voiceManager.speakRoomUnlocked(targetQ.title || targetQ.name);
-    }
     setTransitioning(true);
   };
 
@@ -462,7 +437,6 @@ export default function App() {
       const data = await res.json();
       if (data && data.success) {
         SoundManager.play('success', soundOn);
-        voiceManager.speakCorrect();
 
         // Update currentQuestions with solved and attempts status
         setCurrentQuestions((prev) =>
@@ -517,7 +491,6 @@ export default function App() {
         return { success: true, message: data.message };
       } else {
         SoundManager.play('error', soundOn);
-        voiceManager.speakIncorrect();
         narrativeEngine.onWrongAnswer(`level_${activeQuestionIndex + 1 + (currentSessionNumber === 2 ? 15 : 0)}`);
 
         // Update attemptsRemaining and isLocked in currentQuestions

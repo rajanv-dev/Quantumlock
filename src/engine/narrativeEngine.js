@@ -2,7 +2,6 @@
 
 import { DOOM_EMOTIONS } from '../data/doomDialogue';
 import { contentStore } from './contentStore';
-import { voiceManager } from '../utils/voiceManager';
 
 export class NarrativeEngine {
   constructor(initialState = {}) {
@@ -66,7 +65,6 @@ export class NarrativeEngine {
       isDismissable: true
     };
 
-    voiceManager.speak(text, { emotion: intro.emotion });
     this.notify();
     return this.currentDialogue;
   }
@@ -91,7 +89,6 @@ export class NarrativeEngine {
         isDismissable: true
       };
 
-      voiceManager.speak(choice.doomReply, { emotion: choice.emotion });
     } else {
       this.currentDialogue = null;
     }
@@ -126,7 +123,6 @@ export class NarrativeEngine {
       isDismissable: true
     };
 
-    voiceManager.speak(reaction.text, { emotion: reaction.emotion });
     this.notify();
     return this.currentDialogue;
   }
@@ -153,7 +149,6 @@ export class NarrativeEngine {
       isDismissable: true
     };
 
-    voiceManager.speak(reaction.text, { emotion: reaction.emotion });
     this.notify();
     return this.currentDialogue;
   }
@@ -173,7 +168,6 @@ export class NarrativeEngine {
         choices: [],
         isDismissable: true
       };
-      voiceManager.speak(reaction.text, { emotion: reaction.emotion });
       this.notify();
     }
   }
@@ -195,7 +189,6 @@ export class NarrativeEngine {
         isDismissable: true
       };
 
-      voiceManager.speak(responseText, { emotion: DOOM_EMOTIONS.GLITCHING });
       this.notify();
       return true;
     }
@@ -205,7 +198,6 @@ export class NarrativeEngine {
   dismissDialogue() {
     this.currentDialogue = null;
     this.doomMood = DOOM_EMOTIONS.IDLE;
-    voiceManager.stop();
     this.notify();
   }
 }

@@ -6,14 +6,11 @@ import {
   IconTerminal,
   IconVolume,
   IconVolumeMute,
-  IconMic,
-  IconMicOff,
   IconAlert,
   IconCheck,
   IconTrophy,
   IconShield
 } from './CyberIcons';
-import { voiceManager } from '../utils/voiceManager';
 
 export const LandingScreen = ({
   isActive,
@@ -28,15 +25,6 @@ export const LandingScreen = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [voiceOn, setVoiceOn] = useState(() => voiceManager.isEnabled());
-
-  const handleToggleVoice = () => {
-    const next = voiceManager.toggle();
-    setVoiceOn(next);
-    if (next) {
-      voiceManager.speakWelcome();
-    }
-  };
 
   // Cinematic opening sequence stages: 0 to 5
   // Cinematic opening sequence stages: default 5 for immediate high-impact render
@@ -172,24 +160,6 @@ export const LandingScreen = ({
           </div>
 
           <div className="hero-header-right">
-            <button
-              id="btn-voice-toggle-hero"
-              type="button"
-              className="hero-header-btn hero-header-btn--voice"
-              aria-pressed={voiceOn}
-              title={voiceOn ? "Disable mission control voice" : "Enable mission control voice"}
-              onClick={handleToggleVoice}
-              style={{
-                borderColor: voiceOn ? 'var(--cyber-cyan)' : 'var(--cyber-border)',
-                color: voiceOn ? 'var(--cyber-cyan)' : 'var(--cyber-muted)'
-              }}
-            >
-              <span className="hero-header-btn__icon">
-                {voiceOn ? <IconMic size={14} color="var(--cyber-cyan)" /> : <IconMicOff size={14} />}
-              </span>
-              <span className="hero-header-btn__label">{voiceOn ? 'VOICE ON' : 'VOICE OFF'}</span>
-            </button>
-
             <button
               id="btn-sound-toggle-hero"
               type="button"

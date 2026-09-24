@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   IconLightbulb,
   IconVolume,
   IconVolumeMute,
-  IconMic,
-  IconMicOff,
   IconCross,
   IconTerminal
 } from './CyberIcons';
-import { voiceManager } from '../utils/voiceManager';
 
 export const TopNav = ({
   timerString,
@@ -26,13 +23,6 @@ export const TopNav = ({
   onLogout,
   teamName,
 }) => {
-  const [voiceOn, setVoiceOn] = useState(() => voiceManager.isEnabled());
-
-  const handleToggleVoice = () => {
-    const next = voiceManager.toggle();
-    setVoiceOn(next);
-  };
-
   return (
     <header className="top-nav">
       <div className="top-nav__brand">
@@ -87,27 +77,6 @@ export const TopNav = ({
         )}
         <button id="btn-open-evidence" className="btn btn--ghost btn--sm" style={{ textTransform: 'none', letterSpacing: '0.03em' }} title="Open evidence database" onClick={onOpenEvidence}>
           Evidence <span className="badge" id="evidence-count" style={{ marginLeft: '4px', background: 'rgba(0,255,156,0.12)', border: '1px solid rgba(0,255,156,0.3)', color: '#00FF9C', padding: '1px 6px', borderRadius: '3px', fontSize: '0.7rem' }}>{evidenceCount}</span>
-        </button>
-
-        <button
-          id="btn-voice-toggle-topnav"
-          type="button"
-          className="btn btn--ghost btn--sm"
-          style={{
-            borderColor: voiceOn ? 'var(--doom-cyan)' : 'rgba(255,255,255,0.15)',
-            color: voiceOn ? 'var(--doom-cyan)' : '#9BAFA5',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '5px',
-            textTransform: 'none',
-            letterSpacing: '0.03em'
-          }}
-          aria-pressed={voiceOn}
-          title={voiceOn ? "Disable voice announcements" : "Enable voice announcements"}
-          onClick={handleToggleVoice}
-        >
-          {voiceOn ? <IconMic size={13} color="var(--doom-cyan)" /> : <IconMicOff size={13} />}
-          <span>Voice</span>
         </button>
 
         <button

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { voiceManager } from '../utils/voiceManager';
 import { DOOM_EMOTIONS } from '../data/doomDialogue';
-import { IconVolume, IconVolumeMute, IconChevronRight } from './CyberIcons';
+import { IconChevronRight } from './CyberIcons';
 
 const EMOTION_COLORS = {
   [DOOM_EMOTIONS.IDLE]:        { border: 'var(--doom-green)',   glow: 'rgba(0,255,102,0.3)',    avatar: '#00ff66' },
@@ -19,16 +18,7 @@ const DEFAULT_COLOR = { border: 'var(--doom-green)', glow: 'rgba(0,255,102,0.25)
 export function DoomDialogueOverlay({ dialogue, onChoice, onDismiss }) {
   const [displayedText, setDisplayedText]   = useState('');
   const [isTyping, setIsTyping]             = useState(false);
-  const [isMuted, setIsMuted]               = useState(voiceManager.isMuted);
   const [glitch, setGlitch]                 = useState(false);
-
-  // Subscribe to mute state changes
-  useEffect(() => {
-    const unsub = voiceManager.subscribe((event, data) => {
-      if (event === 'muteChange') setIsMuted(data);
-    });
-    return unsub;
-  }, []);
 
   // Typewriter effect
   useEffect(() => {
@@ -97,25 +87,6 @@ export function DoomDialogueOverlay({ dialogue, onChoice, onDismiss }) {
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="ddov-controls">
-            <button
-              className={`ddov-ctrl ${isMuted ? 'ddov-ctrl--amber' : ''}`}
-              onClick={() => voiceManager.toggleMute ? voiceManager.toggleMute() : voiceManager.toggle()}
-              title={isMuted ? 'Unmute' : 'Mute'}
-              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              {isMuted ? <IconVolumeMute size={13} /> : <IconVolume size={13} />}
-            </button>
-            <button
-              className="ddov-ctrl"
-              onClick={() => voiceManager.speak(dialogue.text, { emotion })}
-              title="Replay"
-              style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)' }}
-            >
-              REPLAY
-            </button>
-          </div>
         </div>
 
         {/* ── DIALOGUE TEXT ── */}

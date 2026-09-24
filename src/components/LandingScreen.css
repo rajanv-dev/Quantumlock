@@ -82,7 +82,7 @@
 .hero-bg-layer {
   position: absolute;
   inset: 0;
-  background-image: url('/images/loginppage.png');
+  background-image: url('../../assets/images/loginppage.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
