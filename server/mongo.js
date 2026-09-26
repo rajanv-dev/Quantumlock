@@ -157,11 +157,11 @@ export async function connectMongoDB() {
     console.log(`[MongoDB] Initializing permanent connection to cluster (${sanitizedUri})...`);
 
     global._mongoCache.promise = mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000,
-      connectTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-      maxPoolSize: 15,
-      minPoolSize: 2,
+      serverSelectionTimeoutMS: 30000,
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 60000,
+      maxPoolSize: 100,
+      minPoolSize: 5,
       maxIdleTimeMS: 300000
     }).then((m) => {
       isConnected = true;

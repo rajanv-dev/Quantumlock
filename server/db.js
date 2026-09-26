@@ -534,17 +534,23 @@ export const Database = {
     const enabledPool = await MongoModels.Question.find({ enabled: { $ne: false } }).lean();
     const pool = enabledPool.length >= 30 ? enabledPool : await MongoModels.Question.find({}).lean();
 
-    // Sort by natural order if available
-    const sortedPool = [...pool].sort((a, b) => (a.order || 0) - (b.order || 0));
+    // Fisher-Yates Random Shuffle per participant so questions are distinct & randomized
+    const shuffledPool = [...pool];
+    for (let i = shuffledPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
+    }
+
     const assignments = [];
 
     // Session 1: 15 Questions (order 1..15)
-    for (let i = 0; i < 15; i++) {
-      if (sortedPool[i]) {
+    const s1Limit = Math.min(15, Math.ceil(shuffledPool.length / 2));
+    for (let i = 0; i < s1Limit; i++) {
+      if (shuffledPool[i]) {
         assignments.push({
           assignmentId: `A_${participantId}_S1_${i + 1}`,
           participantId,
-          questionId: sortedPool[i].id,
+          questionId: shuffledPool[i].id,
           sessionNumber: 1,
           questionOrder: i + 1,
           assignedAt: Date.now()
@@ -553,14 +559,15 @@ export const Database = {
     }
 
     // Session 2: 15 Questions (order 1..15)
-    for (let i = 15; i < 30; i++) {
-      if (sortedPool[i]) {
+    for (let i = s1Limit; i < Math.min(30, shuffledPool.length); i++) {
+      const s2Order = i + 1 - s1Limit;
+      if (shuffledPool[i]) {
         assignments.push({
-          assignmentId: `A_${participantId}_S2_${i + 1 - 15}`,
+          assignmentId: `A_${participantId}_S2_${s2Order}`,
           participantId,
-          questionId: sortedPool[i].id,
+          questionId: shuffledPool[i].id,
           sessionNumber: 2,
-          questionOrder: i + 1 - 15,
+          questionOrder: s2Order,
           assignedAt: Date.now()
         });
       }
@@ -652,6 +659,9 @@ export const Database = {
       const cleanTitle = rawTitle.replace(/^(ROOM|CHAMBER|STAGE|LEVEL|SECTOR)\s*\d+[:\-—\s]*/i, '').trim();
       const dynamicTitle = `ROOM ${formattedLevelStr}: ${cleanTitle}`;
 
+      const rawQuestionStr = fullQ.question || '';
+      const cleanQuestionStr = rawQuestionStr.replace(/^(ROOM|CHAMBER|STAGE|LEVEL|SECTOR)\s*\d+[:\-—\s]*/i, '').trim();
+
       return {
         assignmentId: assign.assignmentId,
         order: assign.questionOrder,
@@ -667,7 +677,7 @@ export const Database = {
         investigationType: fullQ.investigationType,
         story: fullQ.story,
         codeLines: fullQ.codeLines,
-        question: fullQ.question,
+        question: cleanQuestionStr || fullQ.question,
         hints: fullQ.hints,
         fragment: fullQ.fragment,
         evidenceTitle: fullQ.evidenceTitle,
