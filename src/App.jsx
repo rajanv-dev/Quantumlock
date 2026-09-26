@@ -36,6 +36,8 @@ const TEAM_NAME_KEY = 'AIDEX_TEAM_NAME_V1';
 export default function App() {
   const [participantToken, setParticipantToken] = useState(() => localStorage.getItem(TOKEN_KEY) || null);
   const [teamName, setTeamName] = useState(() => localStorage.getItem(TEAM_NAME_KEY) || '');
+  const [authLoading, setAuthLoading] = useState(() => Boolean(localStorage.getItem(TOKEN_KEY)));
+  const [requestedRedirect, setRequestedRedirect] = useState(null);
   const [showVideoIntro, setShowVideoIntro] = useState(false);
   const [eventState, setEventState] = useState({ status: 'CLOSED', active_session: 0 });
   const [sessionStats, setSessionStats] = useState({});
@@ -109,10 +111,70 @@ export default function App() {
     }
   }, [activeQuestionIndex, currentSessionNumber, currentQuestion?.id, solvedQuestions.length]);
 
-  // Global Keyboard Listener: '/' opens command palette, 'Ctrl+Shift+A' opens Admin Auth Prompt
+  // ─────────────────────────────────────────────────────────────────────────────
+  // CENTRALIZED ROUTE PROTECTION & AUTH GUARD (RULES 1, 2, 3, 5, 9, 10, 14)
+  // ─────────────────────────────────────────────────────────────────────────────
+  const checkAuthAndRoute = (questionsList = currentQuestions) => {
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    const search = window.location.search.toLowerCase();
+    const searchParams = new URLSearchParams(window.location.search);
+    const redirectQuery = searchParams.get('redirect');
+
+    // Match dynamic room/level routes e.g. /room/5, /level/10
+    const roomMatch = path.match(/\/(?:room|level)\/(\d+)/i) || hash.match(/(?:room|level)\/(\d+)/i);
+    const targetRoomId = roomMatch ? parseInt(roomMatch[1], 10) : null;
+
+    const isProtectedRoute = targetRoomId !== null || (
+      path.includes('/dashboard') ||
+      path.includes('/game') ||
+      path.includes('/mission') ||
+      path.includes('/room') ||
+      path.includes('/level') ||
+      path.includes('/profile')
+    );
+
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    // Modal routes
+    if (
+      path.includes('/option') || path === '/option' || hash.includes('option') || search.includes('option') ||
+      path.includes('/admin') || path === '/admin' || hash.includes('admin') || search.includes('admin')
+    ) {
+      setCommandModalMode('admin_auth');
+      setCommandModalOpen(true);
+    } else if (path.includes('/leaderboard') || path === '/leaderboard' || hash.includes('leaderboard') || search.includes('leaderboard')) {
+      setLeaderboardOpen(true);
+    }
+
+    if (!token) {
+      // UNAUTHENTICATED ACCESS ATTEMPT TO PROTECTED ROUTE (Rules 1, 2, 5)
+      if (isProtectedRoute) {
+        const fullPath = window.location.pathname + window.location.search + window.location.hash;
+        setRequestedRedirect(fullPath);
+        const safeRedirectUrl = `/login?redirect=${encodeURIComponent(fullPath)}`;
+        window.history.replaceState({}, '', safeRedirectUrl);
+      }
+    } else {
+      // AUTHENTICATED USER ACCESS (Rules 3, 5, 14)
+      const targetRedirect = redirectQuery || requestedRedirect;
+      const targetMatch = targetRedirect ? targetRedirect.match(/\/(?:room|level)\/(\d+)/i) : null;
+      const finalRoomId = targetMatch ? parseInt(targetMatch[1], 10) : targetRoomId;
+
+      if (finalRoomId !== null && questionsList && questionsList.length > 0) {
+        const sessNum = eventState.active_session || 1;
+        const roomOffset = sessNum === 2 ? 15 : 0;
+        const targetIdx = finalRoomId - 1 - roomOffset;
+        if (targetIdx >= 0 && targetIdx < questionsList.length) {
+          setActiveQuestionIndex(targetIdx);
+        }
+      }
+    }
+  };
+
+  // Global Keyboard Listener & URL Hash/State Route Guard
   useEffect(() => {
     const handleGlobalKeyDown = (e) => {
-      // Ignore if user is currently typing in an input, textarea or contenteditable element
       const targetTag = e.target?.tagName?.toLowerCase();
       const isInput = targetTag === 'input' || targetTag === 'textarea' || e.target?.isContentEditable;
 
@@ -130,33 +192,36 @@ export default function App() {
       }
     };
 
-    // Check URL Path / Hash on load (/option, #/option, /admin, #/admin, /leaderboard, #/leaderboard)
-    const checkRoute = () => {
-      const path = window.location.pathname.toLowerCase();
-      const hash = window.location.hash.toLowerCase();
-      const search = window.location.search.toLowerCase();
-      if (
-        path.includes('/option') || path === '/option' || hash.includes('option') || search.includes('option') ||
-        path.includes('/admin') || path === '/admin' || hash.includes('admin') || search.includes('admin')
-      ) {
-        setCommandModalMode('admin_auth');
-        setCommandModalOpen(true);
-      } else if (path.includes('/leaderboard') || path === '/leaderboard' || hash.includes('leaderboard') || search.includes('leaderboard')) {
-        setLeaderboardOpen(true);
+    const handleRouteEvent = () => {
+      checkAuthAndRoute();
+    };
+
+    const handleStorageChange = (e) => {
+      if (e.key === TOKEN_KEY) {
+        const newToken = localStorage.getItem(TOKEN_KEY);
+        if (!newToken && participantToken) {
+          handleLogout();
+        } else if (newToken && newToken !== participantToken) {
+          setParticipantToken(newToken);
+          syncServerState();
+        }
       }
     };
 
     window.addEventListener('keydown', handleGlobalKeyDown);
-    window.addEventListener('hashchange', checkRoute);
-    window.addEventListener('popstate', checkRoute);
-    checkRoute();
+    window.addEventListener('hashchange', handleRouteEvent);
+    window.addEventListener('popstate', handleRouteEvent);
+    window.addEventListener('storage', handleStorageChange);
+
+    checkAuthAndRoute();
 
     return () => {
       window.removeEventListener('keydown', handleGlobalKeyDown);
-      window.removeEventListener('hashchange', checkRoute);
-      window.removeEventListener('popstate', checkRoute);
+      window.removeEventListener('hashchange', handleRouteEvent);
+      window.removeEventListener('popstate', handleRouteEvent);
+      window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [participantToken]);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // SERVER STATE SYNCHRONIZATION (INITIAL LOAD, REFRESH & SSE STREAM)
@@ -211,9 +276,22 @@ export default function App() {
               });
             }
 
-            // Set active question on initial load / session change
+            // Set active question on initial load / session change / URL route
             const currentSess = data.sessionNumber || data.eventState?.active_session || 1;
-            if (!hasInitializedQuestionIndexRef.current || lastSessionNumberRef.current !== currentSess) {
+            const path = window.location.pathname.toLowerCase();
+            const hash = window.location.hash.toLowerCase();
+            const roomMatch = path.match(/\/(?:room|level)\/(\d+)/i) || hash.match(/(?:room|level)\/(\d+)/i);
+            const targetRoomId = roomMatch ? parseInt(roomMatch[1], 10) : null;
+
+            if (targetRoomId !== null) {
+              const roomOffset = currentSess === 2 ? 15 : 0;
+              const targetIdx = targetRoomId - 1 - roomOffset;
+              if (targetIdx >= 0 && targetIdx < data.questions.length) {
+                setActiveQuestionIndex(targetIdx);
+              }
+              hasInitializedQuestionIndexRef.current = true;
+              lastSessionNumberRef.current = currentSess;
+            } else if (!hasInitializedQuestionIndexRef.current || lastSessionNumberRef.current !== currentSess) {
               const firstUnsolved = data.questions.findIndex((q) => !q.isSolved);
               const targetIdx = firstUnsolved !== -1 ? firstUnsolved : (data.questions.length - 1);
               setActiveQuestionIndex(targetIdx);
@@ -236,6 +314,8 @@ export default function App() {
       }
     } catch (err) {
       console.warn('[App] Server synchronization notice:', err);
+    } finally {
+      setAuthLoading(false);
     }
   };
 
@@ -275,7 +355,6 @@ export default function App() {
                 syncServerState();
               }
             } else if (data.type === 'LEADERBOARD_UPDATED') {
-              // Update stats on leaderboard event
               if (participantToken) {
                 fetch('/api/participant/state', { headers: { 'x-participant-token': participantToken } })
                   .then((r) => r.json())
@@ -295,7 +374,6 @@ export default function App() {
 
   // ─────────────────────────────────────────────────────────────────────────────
   // PURE LOCAL 1-SECOND TIMER COUNTDOWN (DERIVED FROM SERVER sessionEndTime)
-  // ZERO DATABASE POLLING REQUIRED!
   // ─────────────────────────────────────────────────────────────────────────────
   useEffect(() => {
     timerSynchronizer.syncServerState(eventState);
@@ -314,8 +392,41 @@ export default function App() {
   }, [eventState.status, eventState.session_end_time, eventState.timer_paused, eventState.active_session]);
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // PARTICIPANT REGISTRATION & LOGIN (WITH PASSCODE & RESTORE STATE)
+  // PARTICIPANT REGISTRATION & LOGIN (WITH RETURN URL REDIRECT)
   // ─────────────────────────────────────────────────────────────────────────────
+  const handleAuthCompletion = async (token, teamCallsign, eventStateData) => {
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(TEAM_NAME_KEY, teamCallsign);
+    sessionStorage.setItem(TOKEN_KEY, token);
+    sessionStorage.setItem(TEAM_NAME_KEY, teamCallsign);
+    setParticipantToken(token);
+    setTeamName(teamCallsign);
+    setEventState(eventStateData);
+    setShowVideoIntro(true);
+
+    await syncServerState();
+
+    // Rule 3: Return to requested URL after login
+    const searchParams = new URLSearchParams(window.location.search);
+    const redirectParam = searchParams.get('redirect') || requestedRedirect;
+    if (redirectParam && redirectParam.startsWith('/')) {
+      window.history.replaceState({}, '', redirectParam);
+      const roomMatch = redirectParam.match(/\/(?:room|level)\/(\d+)/i);
+      if (roomMatch) {
+        const rId = parseInt(roomMatch[1], 10);
+        const sessNum = eventStateData.active_session || 1;
+        const roomOffset = sessNum === 2 ? 15 : 0;
+        const targetIdx = rId - 1 - roomOffset;
+        if (targetIdx >= 0) {
+          setActiveQuestionIndex(targetIdx);
+        }
+      }
+      setRequestedRedirect(null);
+    } else {
+      window.history.replaceState({}, '', '/game');
+    }
+  };
+
   const handleRegisterTeam = async (callsign, passcode = '') => {
     try {
       const res = await fetch('/api/participant/register', {
@@ -325,13 +436,7 @@ export default function App() {
       });
       const data = await res.json();
       if (data && data.success) {
-        localStorage.setItem(TOKEN_KEY, data.participant.token);
-        localStorage.setItem(TEAM_NAME_KEY, data.participant.teamName);
-        setParticipantToken(data.participant.token);
-        setTeamName(data.participant.teamName);
-        setEventState(data.eventState);
-        setShowVideoIntro(true);
-        await syncServerState();
+        await handleAuthCompletion(data.participant.token, data.participant.teamName, data.eventState);
         return { success: true };
       } else {
         return { success: false, message: data.message || 'REGISTRATION FAILED' };
@@ -350,13 +455,7 @@ export default function App() {
       });
       const data = await res.json();
       if (data && data.success) {
-        localStorage.setItem(TOKEN_KEY, data.participant.token);
-        localStorage.setItem(TEAM_NAME_KEY, data.participant.teamName);
-        setParticipantToken(data.participant.token);
-        setTeamName(data.participant.teamName);
-        setEventState(data.eventState);
-        setShowVideoIntro(true);
-        await syncServerState();
+        await handleAuthCompletion(data.participant.token, data.participant.teamName, data.eventState);
         return { success: true };
       } else {
         return { success: false, message: data.message || 'LOGIN FAILED' };
@@ -374,6 +473,9 @@ export default function App() {
     const targetQ = currentQuestions[targetIndex];
     const fromTitle = currentQuestion ? (currentQuestion.title || currentQuestion.name) : 'CHAMBER COMPLETED';
     const nextDisplayNumber = targetIndex + 1 + (currentSessionNumber === 2 ? 15 : 0);
+
+    // Sync browser URL with room
+    window.history.pushState({}, '', `/room/${nextDisplayNumber}`);
 
     setTransitionData({
       fromRoom: fromTitle,
@@ -393,6 +495,8 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(TEAM_NAME_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(TEAM_NAME_KEY);
     hasInitializedQuestionIndexRef.current = false;
     lastSessionNumberRef.current = null;
     setShowVideoIntro(false);
@@ -401,6 +505,11 @@ export default function App() {
     setCurrentQuestions([]);
     setSolvedQuestions([]);
     setCongratsModalOpen(false);
+    setAuthLoading(false);
+    setRequestedRedirect(null);
+
+    // Replace browser history so Back button does NOT return to protected route
+    window.history.replaceState({}, '', '/login');
   };
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -571,6 +680,41 @@ export default function App() {
   // RENDER GATES
   // ─────────────────────────────────────────────────────────────────────────────
 
+  // Gate 0: Auth Loading State (Rule 8 — Avoid flashing protected content before verifying token)
+  if (authLoading) {
+    return (
+      <div className="auth-loading-overlay" style={{
+        position: 'fixed',
+        inset: 0,
+        background: '#020503',
+        zIndex: 99999,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#00FF9C',
+        fontFamily: 'var(--font-mono)'
+      }}>
+        <Scanlines isCritical={false} />
+        <div style={{
+          width: '44px',
+          height: '44px',
+          borderRadius: '50%',
+          border: '3px solid rgba(0, 255, 156, 0.2)',
+          borderTopColor: '#00FF9C',
+          animation: 'spin 0.8s linear infinite',
+          marginBottom: '20px'
+        }} />
+        <div style={{ fontSize: '0.95rem', fontWeight: '700', letterSpacing: '0.1em' }}>
+          AUTHENTICATING OPERATIVE SESSION...
+        </div>
+        <div style={{ fontSize: '0.78rem', color: '#718078', marginTop: '6px', letterSpacing: '0.05em' }}>
+          VERIFYING LATVERIA-NET CLEARANCE & SECURE TOKENS
+        </div>
+      </div>
+    );
+  }
+
   // Gate 1: Landing screen if team not registered yet
   if (!participantToken) {
     return (
@@ -693,23 +837,29 @@ export default function App() {
               <>
                 {/* ─── 1. FULL STORY & MISSION INTEL ─── */}
                 <div className="doom-intel-console">
+                  {/* Tactical corner brackets */}
+                  <div className="pc-bracket pc-bracket--tl" />
+                  <div className="pc-bracket pc-bracket--tr" />
+                  <div className="pc-bracket pc-bracket--bl" />
+                  <div className="pc-bracket pc-bracket--br" />
+
                   <div className="doom-intel-console__topbar">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#F0B429', letterSpacing: '0.03em', fontWeight: '600' }}>
-                        Latveria-Net Dossier
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: '#00FF9C', letterSpacing: '0.08em', fontWeight: '700', textTransform: 'uppercase' }}>
+                        LATVERIA-NET DOSSIER
                       </span>
                     </div>
-                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: '#718078', letterSpacing: 'normal' }}>
-                      Session {currentSessionNumber} · Level {displayLevelNumber} of 30 ({currentQuestion.category || 'Logic'})
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#718078', letterSpacing: '0.03em' }}>
+                      SESSION {currentSessionNumber} · LEVEL {String(displayLevelNumber).padStart(2, '0')} OF 30 ({currentQuestion.category || 'LOGIC'})
                     </span>
                   </div>
 
                   <div className="doom-intel-console__content">
-                    <p className="story-eyebrow" style={{ textTransform: 'none', letterSpacing: 'normal', color: '#00FF9C', fontSize: '0.85rem', fontWeight: '600', marginBottom: '4px' }}>
-                      Mission Intel — {currentQuestion.subtitle || 'If/Else Decisions'}
+                    <p className="story-eyebrow" style={{ textTransform: 'uppercase', letterSpacing: '0.08em', color: '#00FF9C', fontSize: '0.8rem', fontWeight: '700', marginBottom: '4px', fontFamily: 'var(--font-mono)' }}>
+                      MISSION INTEL — {currentQuestion.subtitle || 'IF-ELSE DECISIONS'}
                     </p>
-                    <h2 className="story-title" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.4rem, 3vw, 1.8rem)', fontWeight: '700', color: '#E8F5EE', letterSpacing: 'normal', margin: '4px 0 16px 0' }}>
-                      {currentQuestion.name}
+                    <h2 className="story-title" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', fontWeight: '700', color: '#E8F5EE', letterSpacing: '0.02em', margin: '4px 0 16px 0' }}>
+                      ROOM {String(displayLevelNumber).padStart(2, '0')}: {currentQuestion.name}
                     </h2>
                     <div className="story-text">
                       {(currentQuestion.story || []).slice(0, revealedParas).map((p, i) => (
@@ -719,10 +869,10 @@ export default function App() {
                           style={{
                             marginBottom: '1rem',
                             padding: '14px 18px',
-                            background: i === 0 ? 'rgba(0, 255, 156, 0.04)' : 'rgba(255, 255, 255, 0.02)',
+                            background: 'rgba(0, 20, 12, 0.45)',
                             borderLeft: i === revealedParas - 1 && revealedParas < (currentQuestion.story || []).length
                               ? '3px solid var(--doom-cyan)'
-                              : '3px solid rgba(0, 255, 156, 0.4)',
+                              : '3px solid #00FF9C',
                             borderRadius: '0 6px 6px 0',
                             animation: 'paraFadeIn 0.3s ease-out forwards',
                             position: 'relative'
@@ -733,29 +883,39 @@ export default function App() {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             marginBottom: '8px',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                            borderBottom: '1px solid rgba(0, 255, 156, 0.15)',
                             paddingBottom: '4px'
                           }}>
                             <span style={{
-                              fontFamily: 'var(--font-body)',
+                              fontFamily: 'var(--font-mono)',
                               fontSize: '0.78rem',
-                              color: '#9BAFA5',
-                              letterSpacing: 'normal',
-                              fontWeight: 600
+                              color: '#00FF9C',
+                              letterSpacing: '0.05em',
+                              fontWeight: 700
                             }}>
-                              Intel Entry {String(i + 1).padStart(2, '0')} of {String((currentQuestion.story || []).length).padStart(2, '0')}
+                              INTEL ENTRY {String(i + 1).padStart(2, '0')} / {String((currentQuestion.story || []).length).padStart(2, '0')}
                             </span>
-                            {i === revealedParas - 1 && revealedParas < (currentQuestion.story || []).length && (
+                            {i === revealedParas - 1 && revealedParas < (currentQuestion.story || []).length ? (
                               <span style={{
-                                fontFamily: 'var(--font-body)',
+                                fontFamily: 'var(--font-mono)',
                                 fontSize: '0.7rem',
                                 color: 'var(--doom-cyan)',
                                 background: 'rgba(0, 229, 255, 0.12)',
                                 border: '1px solid rgba(0, 229, 255, 0.3)',
                                 padding: '1px 6px',
-                                borderRadius: '3px'
+                                borderRadius: '3px',
+                                textTransform: 'uppercase'
                               }}>
-                                Latest Entry
+                                LATEST ENTRY
+                              </span>
+                            ) : (
+                              <span style={{
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '0.7rem',
+                                color: '#718078',
+                                textTransform: 'uppercase'
+                              }}>
+                                STATUS: DECRYPTED
                               </span>
                             )}
                           </div>
@@ -769,8 +929,8 @@ export default function App() {
                       <div style={{
                         marginTop: '1.2rem',
                         padding: '12px 18px',
-                        background: 'rgba(5, 15, 10, 0.4)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        background: 'rgba(0, 20, 12, 0.5)',
+                        border: '1px solid rgba(0, 255, 156, 0.2)',
                         borderRadius: '6px',
                         display: 'flex',
                         alignItems: 'center',
@@ -779,8 +939,11 @@ export default function App() {
                         gap: '12px'
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#718078', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                            DECRYPTION STATUS
+                          </span>
                           <div style={{
-                            width: '120px',
+                            width: '140px',
                             height: '6px',
                             background: 'rgba(255,255,255,0.1)',
                             borderRadius: '3px',
@@ -790,12 +953,10 @@ export default function App() {
                               width: `${Math.round((revealedParas / (currentQuestion.story || []).length) * 100)}%`,
                               height: '100%',
                               background: '#00FF9C',
+                              boxShadow: '0 0 8px #00FF9C',
                               transition: 'width 0.3s ease'
                             }} />
                           </div>
-                          <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: '#9BAFA5' }}>
-                            Decrypted {revealedParas} of {(currentQuestion.story || []).length} entries
-                          </span>
                           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: '#00FF9C', fontWeight: 'bold' }}>
                             {Math.round((revealedParas / (currentQuestion.story || []).length) * 100)}%
                           </span>
@@ -814,20 +975,20 @@ export default function App() {
                                   background: 'rgba(0, 255, 156, 0.15)',
                                   border: '1px solid #00FF9C',
                                   color: '#00FF9C',
-                                  fontWeight: '600',
-                                  fontSize: '0.82rem',
+                                  fontWeight: '700',
+                                  fontSize: '0.8rem',
                                   padding: '6px 14px',
-                                  letterSpacing: '0.03em',
-                                  textTransform: 'none',
+                                  letterSpacing: '0.05em',
+                                  textTransform: 'uppercase',
                                   cursor: 'pointer',
                                   display: 'flex',
                                   alignItems: 'center',
                                   gap: '6px',
-                                  borderRadius: '4px'
+                                  borderRadius: '4px',
+                                  fontFamily: 'var(--font-mono)'
                                 }}
                               >
-                                <span>Reveal Next</span>
-                                <span style={{ fontSize: '9px' }}>▾</span>
+                                <span>[ REVEAL NEXT ▼ ]</span>
                               </button>
 
                               <button
@@ -837,30 +998,33 @@ export default function App() {
                                   setRevealedParas((currentQuestion.story || []).length);
                                 }}
                                 style={{
-                                  border: '1px solid rgba(255,255,255,0.15)',
+                                  border: '1px solid rgba(0, 255, 156, 0.3)',
                                   color: '#9BAFA5',
-                                  fontSize: '0.8rem',
+                                  fontSize: '0.78rem',
                                   padding: '6px 12px',
-                                  textTransform: 'none',
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.04em',
                                   cursor: 'pointer',
-                                  borderRadius: '4px'
+                                  borderRadius: '4px',
+                                  fontFamily: 'var(--font-mono)'
                                 }}
                               >
-                                Reveal All
+                                [ REVEAL ALL ]
                               </button>
                             </>
                           ) : (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                               <span style={{
-                                fontFamily: 'var(--font-body)',
-                                fontSize: '0.82rem',
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '0.8rem',
                                 color: '#00FF9C',
-                                fontWeight: '600',
+                                fontWeight: '700',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '6px'
+                                gap: '6px',
+                                textTransform: 'uppercase'
                               }}>
-                                <IconCheck size={14} color="#00FF9C" /> Full dossier decrypted
+                                <IconCheck size={14} color="#00FF9C" /> FULL DOSSIER DECRYPTED
                               </span>
                               <button
                                 type="button"
@@ -871,13 +1035,14 @@ export default function App() {
                                   color: '#718078',
                                   fontSize: '0.75rem',
                                   padding: '3px 8px',
-                                  textTransform: 'none',
+                                  textTransform: 'uppercase',
                                   cursor: 'pointer',
-                                  borderRadius: '4px'
+                                  borderRadius: '4px',
+                                  fontFamily: 'var(--font-mono)'
                                 }}
                                 title="Collapse back to first entry"
                               >
-                                Collapse
+                                COLLAPSE
                               </button>
                             </div>
                           )}

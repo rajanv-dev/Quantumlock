@@ -47,15 +47,15 @@ export const DoomQuestionHeader = ({ currentLevel, currentPartId }) => {
 
       {/* MAIN HEADER */}
       <div style={{
-        background: 'rgba(5, 11, 8, 0.72)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'rgba(0, 15, 10, 0.50)',
+        borderBottom: '1px solid rgba(0, 255, 156, 0.25)',
         padding: '10px 1.5rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: '1rem',
-        backdropFilter: 'blur(20px) saturate(130%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(130%)',
+        backdropFilter: 'blur(14px) saturate(130%)',
+        WebkitBackdropFilter: 'blur(14px) saturate(130%)',
         flexWrap: 'wrap',
       }}>
         {/* LEFT: Doom Avatar + Level Info */}
@@ -64,34 +64,38 @@ export const DoomQuestionHeader = ({ currentLevel, currentPartId }) => {
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <div style={{
               width: '38px', height: '38px', borderRadius: '50%',
-              background: 'radial-gradient(circle at 35% 35%, rgba(240,180,41,0.25) 0%, rgba(10,4,20,0.85) 70%)',
-              border: '1px solid rgba(240,180,41,0.4)',
+              background: 'radial-gradient(circle at 35% 35%, rgba(0,255,156,0.25) 0%, rgba(5,15,10,0.85) 70%)',
+              border: '1px solid rgba(0,255,156,0.5)',
+              boxShadow: '0 0 10px rgba(0,255,156,0.3)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              <IconCrown size={18} color="#F0B429" />
+              <IconCrown size={18} color="#00FF9C" />
             </div>
           </div>
 
           <div>
             <div style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: '0.7rem',
-              color: '#9BAFA5',
-              letterSpacing: '0.03em',
+              fontSize: '0.72rem',
+              color: '#00FF9C',
+              letterSpacing: '0.08em',
+              fontWeight: '700',
+              textTransform: 'uppercase',
               marginBottom: '2px',
             }}>
-              Latveria-Net Security Gateway <span style={{ color: '#718078' }}>·</span> <span style={{ color: '#F0B429' }}>Doom Core Active</span>
+              LATVERIA-NET SECURITY GATEWAY <span style={{ color: '#718078' }}>●</span> <span style={{ color: '#F0B429' }}>DOOM CORE ACTIVE</span>
             </div>
             <h1 style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(1.1rem, 2.2vw, 1.4rem)',
-              fontWeight: '700',
+              fontSize: 'clamp(1.1rem, 2.2vw, 1.45rem)',
+              fontWeight: '800',
               color: '#E8F5EE',
               margin: '2px 0',
               lineHeight: '1.2',
-              letterSpacing: 'normal',
+              letterSpacing: '0.04em',
+              textShadow: '0 0 12px rgba(0, 255, 156, 0.25)'
             }}>
-              Room {String(currentLevel.id).padStart(2, '0')}: {rawRoomTitle}
+              ROOM {String(currentLevel.id).padStart(2, '0')}: {rawRoomTitle.toUpperCase()}
             </h1>
             <div style={{
               fontFamily: 'var(--font-body)',

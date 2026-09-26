@@ -102,30 +102,30 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
       <div className="pc-header">
         <div className="pc-header__left">
           <div className={`pc-status-orb ${feedback?.isGranted ? 'pc-status-orb--granted' : (isTimeExpired || isLocked) ? 'pc-status-orb--denied' : feedback?.isGranted === false ? 'pc-status-orb--denied' : 'pc-status-orb--active'}`} />
-          <span className="pc-header__label" style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: '700', color: '#E8F5EE', letterSpacing: 'normal' }}>
-            Override Console
+          <span className="pc-header__label" style={{ fontFamily: 'var(--font-display)', fontSize: '0.92rem', fontWeight: '700', color: '#E8F5EE', letterSpacing: '0.06em' }}>
+            ● OVERRIDE CONSOLE
           </span>
-          <span style={{ fontSize: '0.75rem', color: '#718078', marginLeft: '6px' }}>Doom OS</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#00FF9C', marginLeft: '8px', letterSpacing: '0.05em' }}>DOOM OS</span>
         </div>
         <div className="pc-header__right">
-          <span className="pc-header__level" style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: '#9BAFA5', letterSpacing: 'normal' }}>
-            Level {String(stage.id).padStart(2, '0')} · Session {stage.id <= 15 ? 1 : 2}
+          <span className="pc-header__level" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: '#9BAFA5', letterSpacing: '0.03em' }}>
+            LEVEL {String(stage.id).padStart(2, '0')} · SESSION {stage.id <= 15 ? 1 : 2}
           </span>
           {feedback?.isGranted ? (
-            <span className="pc-status-tag pc-status-tag--breached" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'none' }}>
-              <IconCheck size={12} color="#00FF9C" /> Breached
+            <span className="pc-status-tag pc-status-tag--breached" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>
+              <IconCheck size={12} color="#00FF9C" /> BREACHED
             </span>
           ) : isLocked ? (
-            <span className="pc-status-tag" style={{ background: 'rgba(255, 77, 90, 0.15)', color: '#FF4D5A', borderColor: '#FF4D5A', display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'none' }}>
-              <IconLock size={12} color="#FF4D5A" /> 0 of 2 attempts (Locked)
+            <span className="pc-status-tag" style={{ background: 'rgba(255, 77, 90, 0.15)', color: '#FF4D5A', borderColor: '#FF4D5A', display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>
+              <IconLock size={12} color="#FF4D5A" /> TERMINAL LOCKED
             </span>
           ) : isTimeExpired ? (
-            <span className="pc-status-tag" style={{ background: 'rgba(255, 77, 90, 0.15)', color: '#FF4D5A', borderColor: '#FF4D5A', textTransform: 'none' }}>
-              Timed out
+            <span className="pc-status-tag" style={{ background: 'rgba(255, 77, 90, 0.15)', color: '#FF4D5A', borderColor: '#FF4D5A', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>
+              TIMED OUT
             </span>
           ) : (
-            <span className="pc-status-tag pc-status-tag--locked" style={{ textTransform: 'none' }}>
-              {attemptsRemaining} of 2 attempts remaining
+            <span className="pc-status-tag pc-status-tag--locked" style={{ textTransform: 'uppercase', fontFamily: 'var(--font-mono)', color: '#00FF9C', borderColor: 'rgba(0, 255, 156, 0.4)' }}>
+              STATUS: ACTIVE
             </span>
           )}
         </div>
@@ -136,50 +136,60 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '10px 18px',
-        background: 'rgba(5, 15, 10, 0.4)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        fontFamily: 'var(--font-body)',
+        padding: '12px 20px',
+        background: 'rgba(0, 20, 14, 0.5)',
+        borderBottom: '1px solid rgba(0, 255, 156, 0.2)',
+        fontFamily: 'var(--font-mono)',
         fontSize: '0.85rem',
         flexWrap: 'wrap',
-        gap: '8px'
+        gap: '12px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ color: '#9BAFA5' }}>Score:</span>
-          {isLocked ? (
-            <span style={{ color: '#FF4D5A', fontWeight: '600' }}>0 pts (Chamber Locked)</span>
-          ) : feedback?.isGranted ? (
-            <span style={{ color: '#00FF9C', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <IconCheck size={13} color="#00FF9C" /> Earned {livePotential} pts
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div>
+            <span style={{ color: '#718078', fontSize: '0.7rem', display: 'block', letterSpacing: '0.06em', textTransform: 'uppercase' }}>SCORE</span>
+            <span style={{ color: isLocked ? '#FF4D5A' : '#00FF9C', fontWeight: '700', fontSize: '0.95rem' }}>
+              {isLocked ? '0 / 20' : `${livePotential} / 20`}
             </span>
-          ) : (
-            <span style={{ color: '#00FF9C', fontWeight: '600' }}>
-              {livePotential} / 20 pts {hintDeduction > 0 && `(−${hintDeduction} hints)`} {attemptPenalty > 0 && `(−${attemptPenalty} wrong)`}
+          </div>
+          <div>
+            <span style={{ color: '#718078', fontSize: '0.7rem', display: 'block', letterSpacing: '0.06em', textTransform: 'uppercase' }}>PENALTY</span>
+            <span style={{ color: (hintDeduction + attemptPenalty) > 0 ? '#FF4D5A' : '#9BAFA5', fontWeight: '600', fontSize: '0.95rem' }}>
+              {(hintDeduction + attemptPenalty) > 0 ? `-${hintDeduction + attemptPenalty}` : '0'}
             </span>
-          )}
+          </div>
+          <div>
+            <span style={{ color: '#718078', fontSize: '0.7rem', display: 'block', letterSpacing: '0.06em', textTransform: 'uppercase' }}>WRONG</span>
+            <span style={{ color: (2 - attemptsRemaining) > 0 ? '#FF4D5A' : '#9BAFA5', fontWeight: '600', fontSize: '0.95rem' }}>
+              {2 - attemptsRemaining}
+            </span>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ color: '#9BAFA5' }}>Attempts:</span>
-          <span style={{
-            padding: '2px 8px',
-            borderRadius: '4px',
-            fontWeight: '600',
-            fontSize: '0.8rem',
-            background: isLocked ? 'rgba(255, 77, 90, 0.15)' : attemptsRemaining === 1 ? 'rgba(240, 180, 41, 0.15)' : 'rgba(0, 255, 156, 0.12)',
-            color: isLocked ? '#FF4D5A' : attemptsRemaining === 1 ? '#F0B429' : '#00FF9C',
-            border: `1px solid ${isLocked ? '#FF4D5A' : attemptsRemaining === 1 ? '#F0B429' : 'rgba(0,255,156,0.3)'}`
-          }}>
-            {isLocked ? '0 of 2 remaining' : feedback?.isGranted ? 'Cleared' : `${attemptsRemaining} of 2 remaining`}
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div>
+            <span style={{ color: '#718078', fontSize: '0.7rem', display: 'block', letterSpacing: '0.06em', textTransform: 'uppercase', textAlign: 'right' }}>ATTEMPTS</span>
+            <span style={{
+              padding: '2px 8px',
+              borderRadius: '4px',
+              fontWeight: '700',
+              fontSize: '0.82rem',
+              display: 'inline-block',
+              marginTop: '2px',
+              background: isLocked ? 'rgba(255, 77, 90, 0.15)' : attemptsRemaining === 1 ? 'rgba(240, 180, 41, 0.15)' : 'rgba(0, 255, 156, 0.12)',
+              color: isLocked ? '#FF4D5A' : attemptsRemaining === 1 ? '#F0B429' : '#00FF9C',
+              border: `1px solid ${isLocked ? '#FF4D5A' : attemptsRemaining === 1 ? '#F0B429' : 'rgba(0,255,156,0.3)'}`
+            }}>
+              {isLocked ? '00 / 02 REMAINING' : feedback?.isGranted ? 'CLEARED' : `0${attemptsRemaining} / 02 REMAINING`}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* ─── ANSWER FORM ─── */}
       <div className="pc-form-area">
         <form onSubmit={handleSubmit}>
-          <label className={`pc-form-label ${focusActive ? 'pc-form-label--active' : ''}`} htmlFor="pc-answer-input" style={{ textTransform: 'none', letterSpacing: 'normal', fontSize: '0.9rem', color: '#E8F5EE' }}>
-            Transmit Override Key
+          <label className={`pc-form-label ${focusActive ? 'pc-form-label--active' : ''}`} htmlFor="pc-answer-input" style={{ textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.8rem', color: '#00FF9C', fontFamily: 'var(--font-mono)', fontWeight: '700' }}>
+            &gt; ENTER ACCESS KEY
           </label>
 
           <div className="pc-input-row" style={{ marginTop: '6px' }}>
@@ -203,7 +213,7 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
                 onBlur={() => setFocusActive(false)}
                 disabled={feedback?.isGranted || isSubmitting || (isTimeExpired && !feedback?.isGranted) || isLocked}
                 className={`pc-input ${focusActive ? 'pc-input--focused' : ''} ${(feedback?.isGranted === false || isLocked || (isTimeExpired && !feedback?.isGranted)) ? 'pc-input--error' : ''} ${feedback?.isGranted ? 'pc-input--success' : ''}`}
-                style={{ letterSpacing: 'normal', textTransform: 'none', fontSize: '0.95rem' }}
+                style={{ letterSpacing: '0.04em', fontFamily: 'var(--font-mono)', fontSize: '0.95rem' }}
               />
               {feedback?.isGranted && (
                 <span className="pc-input-checkmark">
@@ -217,18 +227,18 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
               className={`pc-submit-btn ${isSubmitting ? 'pc-submit-btn--loading' : ''} ${feedback?.isGranted ? 'pc-submit-btn--success' : ''}`}
               disabled={feedback?.isGranted || isSubmitting || !answer.trim() || (isTimeExpired && !feedback?.isGranted) || isLocked}
               id="btn-submit-answer"
-              style={{ textTransform: 'none', letterSpacing: '0.03em', fontSize: '0.9rem' }}
+              style={{ fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.88rem' }}
             >
               {isSubmitting ? (
-                <span>Submitting...</span>
+                <span>TRANSMITTING...</span>
               ) : feedback?.isGranted ? (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><IconCheck size={13} /> Breached</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><IconCheck size={13} /> BREACHED</span>
               ) : isLocked ? (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><IconLock size={13} /> Locked</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><IconLock size={13} /> LOCKED</span>
               ) : isTimeExpired ? (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><IconLock size={13} /> Time Expired</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><IconLock size={13} /> TIME EXPIRED</span>
               ) : (
-                <>Transmit Key</>
+                <>[ TRANSMIT OVERRIDE ]</>
               )}
             </button>
           </div>
@@ -245,13 +255,13 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
                 background: 'rgba(240, 180, 41, 0.1)',
                 border: '1px solid rgba(240, 180, 41, 0.4)',
                 color: '#F0B429',
-                borderRadius: '6px',
-                padding: '7px 14px',
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.85rem',
+                borderRadius: '4px',
+                padding: '6px 14px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.82rem',
                 fontWeight: '600',
-                letterSpacing: '0.02em',
-                textTransform: 'none',
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
                 cursor: (feedback?.isGranted || isTimeExpired || isLocked) ? 'not-allowed' : 'pointer',
                 opacity: (feedback?.isGranted || isTimeExpired || isLocked) ? 0.5 : 1,
                 display: 'inline-flex',
@@ -260,16 +270,16 @@ export const PuzzleCard = ({ stage, hintsUsed, initialInput, isTimeExpired, onSu
                 transition: 'all 0.2s ease',
               }}
             >
-              <IconLightbulb size={15} color="#F0B429" />
-              <span>Request Hint</span>
+              <IconLightbulb size={14} color="#F0B429" />
+              <span>[ ? REQUEST HINT ]</span>
             </button>
             {totalPenalty > 0 || hintDeduction > 0 ? (
-              <span className="pc-penalty" style={{ color: '#FF4D5A', fontFamily: 'var(--font-body)', fontSize: '0.8rem', fontWeight: '500', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <span className="pc-penalty" style={{ color: '#FF4D5A', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: '500', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <IconAlert size={14} color="#FF4D5A" /> Hint penalty: −{totalPenalty}s / −{hintDeduction} pts
               </span>
             ) : (
-              <span style={{ color: '#718078', fontFamily: 'var(--font-body)', fontSize: '0.78rem' }}>
-                Base: 20 pts · Hint 1: −3 pts · Hint 2: −5 pts · Wrong: −2 pts & 1 attempt
+              <span style={{ color: '#718078', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+                BASE: 20 PTS · HINT 1: −3 PTS · HINT 2: −5 PTS · WRONG: −2 PTS & 1 ATTEMPT
               </span>
             )}
           </div>
