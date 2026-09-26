@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { SoundManager } from '../utils/soundManager';
 import { IconCheck } from './CyberIcons';
 
 export const TransitionOverlay = ({
   isActive,
   transitionData = {},
-  soundOn = true,
   onFinish
 }) => {
   const [phase, setPhase] = useState('breach'); // 'breach' | 'warp' | 'reveal' | 'exit'
@@ -28,11 +26,6 @@ export const TransitionOverlay = ({
     onFinishRef.current = onFinish;
   }, [onFinish]);
 
-  const soundOnRef = useRef(soundOn);
-  useEffect(() => {
-    soundOnRef.current = soundOn;
-  }, [soundOn]);
-
   const handlesRef = useRef([]);
 
   const clearAllHandles = () => {
@@ -46,7 +39,6 @@ export const TransitionOverlay = ({
   const handleComplete = () => {
     clearAllHandles();
     setPhase('exit');
-    SoundManager.playSynth('engage', soundOnRef.current);
     const exitTimer = setTimeout(() => {
       if (onFinishRef.current) onFinishRef.current();
     }, 280);
@@ -67,8 +59,6 @@ export const TransitionOverlay = ({
     setProgress(0);
     setDisplayedIntel('');
     setCanSkip(false);
-
-    SoundManager.playSynth('breach', soundOnRef.current);
 
     const totalDuration = 2400; // 2.4s total cinematic sequence
 
@@ -93,14 +83,12 @@ export const TransitionOverlay = ({
     // 3. Phase: Warp at 450ms
     const warpTimer = setTimeout(() => {
       setPhase('warp');
-      SoundManager.playSynth('warp', soundOnRef.current);
     }, 450);
     handlesRef.current.push(warpTimer);
 
     // 4. Phase: Reveal at 850ms with fast typewriter
     const revealTimer = setTimeout(() => {
       setPhase('reveal');
-      SoundManager.playSynth('chime', soundOnRef.current);
 
       let charIdx = 0;
       const cleanTeaser = String(storyTeaser || 'Decrypting incoming logic vectors...').trim();

@@ -4,8 +4,6 @@ import loginBackground from '../../assets/images/loginppage.png';
 import {
   IconLock,
   IconTerminal,
-  IconVolume,
-  IconVolumeMute,
   IconAlert,
   IconCheck,
   IconTrophy,
@@ -16,8 +14,6 @@ export const LandingScreen = ({
   isActive,
   onEnterProtocol,
   onLoginTeam,
-  soundOn,
-  onToggleSound,
 }) => {
   const [authMode, setAuthMode] = useState('signup'); // 'signup' | 'login'
   const [teamCallsign, setTeamCallsign] = useState('');
@@ -159,21 +155,7 @@ export const LandingScreen = ({
             </div>
           </div>
 
-          <div className="hero-header-right">
-            <button
-              id="btn-sound-toggle-hero"
-              type="button"
-              className="hero-header-btn hero-header-btn--sound"
-              aria-pressed={soundOn}
-              title="Toggle ambient audio"
-              onClick={onToggleSound}
-            >
-              <span className="hero-header-btn__icon">
-                {soundOn ? <IconVolume size={14} color="var(--cyber-neon)" /> : <IconVolumeMute size={14} />}
-              </span>
-              <span className="hero-header-btn__label">{soundOn ? 'SOUND ON' : 'SOUND OFF'}</span>
-            </button>
-          </div>
+          <div className="hero-header-right" />
         </header>
 
         {/* Central Hero Content */}

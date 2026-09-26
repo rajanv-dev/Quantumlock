@@ -1,8 +1,6 @@
 import React from 'react';
 import {
   IconLightbulb,
-  IconVolume,
-  IconVolumeMute,
   IconCross,
   IconTerminal
 } from './CyberIcons';
@@ -17,8 +15,6 @@ export const TopNav = ({
   evidenceCount,
   onOpenEvidence,
   onOpenHint,
-  soundOn,
-  onToggleSound,
   onOpenLeaderboard,
   onLogout,
   teamName,
@@ -77,18 +73,6 @@ export const TopNav = ({
         )}
         <button id="btn-open-evidence" className="btn btn--ghost btn--sm" style={{ textTransform: 'none', letterSpacing: '0.03em' }} title="Open evidence database" onClick={onOpenEvidence}>
           Evidence <span className="badge" id="evidence-count" style={{ marginLeft: '4px', background: 'rgba(0,255,156,0.12)', border: '1px solid rgba(0,255,156,0.3)', color: '#00FF9C', padding: '1px 6px', borderRadius: '3px', fontSize: '0.7rem' }}>{evidenceCount}</span>
-        </button>
-
-        <button
-          id="btn-sound-toggle-2"
-          className="btn btn--ghost btn--sm"
-          aria-pressed={soundOn}
-          title="Toggle sound"
-          onClick={onToggleSound}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', textTransform: 'none', letterSpacing: '0.03em' }}
-        >
-          {soundOn ? <IconVolume size={13} color="#00FF9C" /> : <IconVolumeMute size={13} />}
-          <span>Sound</span>
         </button>
 
         {onLogout && (

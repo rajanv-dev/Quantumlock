@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { SoundManager } from '../utils/soundManager';
 import { IconAlert, IconCheck, IconCross } from './CyberIcons';
 
 export const HintModal = ({ isOpen, stage, hintsUsed = {}, onRevealHint, onClose }) => {
@@ -279,7 +278,6 @@ export const HintModal = ({ isOpen, stage, hintsUsed = {}, onRevealHint, onClose
                         type="button"
                         className={`btn ${idx === 2 ? 'btn--danger' : 'btn--primary'} btn--sm btn--charge`}
                         onClick={() => {
-                          SoundManager.play('click', true);
                           onRevealHint(stage.key, idx, h.penalty);
                         }}
                         style={{ padding: '6px 14px', fontSize: '0.75rem', flexShrink: 0 }}

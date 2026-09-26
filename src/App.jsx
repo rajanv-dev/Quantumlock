@@ -27,7 +27,6 @@ import { FinalRecapWidget } from './components/widgets/FinalRecapWidget';
 import { PuzzleCard } from './components/widgets/PuzzleCard';
 
 import { narrativeEngine } from './engine/narrativeEngine';
-import { SoundManager } from './utils/soundManager';
 import { timerSynchronizer } from './utils/timerSync';
 import { IconCheck, IconTerminal } from './components/CyberIcons';
 
@@ -54,7 +53,6 @@ export default function App() {
   const [hintModalOpen, setHintModalOpen] = useState(false);
   const [levelSelectOpen, setLevelSelectOpen] = useState(false);
   const [activeCinematic, setActiveCinematic] = useState(null);
-  const [soundOn, setSoundOn] = useState(false);
 
   // Gameplay State
   const [solvedQuestions, setSolvedQuestions] = useState([]);
@@ -333,7 +331,6 @@ export default function App() {
         setTeamName(data.participant.teamName);
         setEventState(data.eventState);
         setShowVideoIntro(true);
-        SoundManager.play('success', soundOn);
         await syncServerState();
         return { success: true };
       } else {
@@ -359,7 +356,6 @@ export default function App() {
         setTeamName(data.participant.teamName);
         setEventState(data.eventState);
         setShowVideoIntro(true);
-        SoundManager.play('success', soundOn);
         await syncServerState();
         return { success: true };
       } else {
@@ -436,8 +432,6 @@ export default function App() {
 
       const data = await res.json();
       if (data && data.success) {
-        SoundManager.play('success', soundOn);
-
         // Update currentQuestions with solved and attempts status
         setCurrentQuestions((prev) =>
           prev.map((q) =>
@@ -490,7 +484,6 @@ export default function App() {
 
         return { success: true, message: data.message };
       } else {
-        SoundManager.play('error', soundOn);
         narrativeEngine.onWrongAnswer(`level_${activeQuestionIndex + 1 + (currentSessionNumber === 2 ? 15 : 0)}`);
 
         // Update attemptsRemaining and isLocked in currentQuestions
@@ -590,8 +583,6 @@ export default function App() {
           onLoginTeam={handleLoginTeam}
           onContinueMission={handleLoginTeam}
           onNewMission={handleRegisterTeam}
-          soundOn={soundOn}
-          onToggleSound={() => setSoundOn(!soundOn)}
         />
         <CommandAuthModal
           isOpen={commandModalOpen}
@@ -654,8 +645,6 @@ export default function App() {
         evidenceCount={evidenceList.length}
         onOpenEvidence={() => setJournalOpen(true)}
         onOpenHint={() => setHintModalOpen(true)}
-        soundOn={soundOn}
-        onToggleSound={() => setSoundOn(!soundOn)}
         onOpenLeaderboard={() => setLeaderboardOpen(true)}
         onLogout={handleLogout}
         teamName={teamName}
@@ -819,7 +808,6 @@ export default function App() {
                                 type="button"
                                 className="btn btn--primary btn--sm"
                                 onClick={() => {
-                                  SoundManager.play('click', soundOn);
                                   setRevealedParas((prev) => Math.min((currentQuestion.story || []).length, prev + 1));
                                 }}
                                 style={{
@@ -846,7 +834,6 @@ export default function App() {
                                 type="button"
                                 className="btn btn--ghost btn--sm"
                                 onClick={() => {
-                                  SoundManager.play('click', soundOn);
                                   setRevealedParas((currentQuestion.story || []).length);
                                 }}
                                 style={{
@@ -1016,7 +1003,6 @@ export default function App() {
       <TransitionOverlay
         isActive={transitioning}
         transitionData={transitionData || {}}
-        soundOn={soundOn}
         onFinish={() => {
           if (transitionData && typeof transitionData.targetIndex === 'number') {
             setActiveQuestionIndex(transitionData.targetIndex);
