@@ -136,398 +136,398 @@ export const LandingScreen = ({
         {/* ─────────────────────────────────────────────────────────────────── */}
         <section className="hero-viewport" id="hero-section">
 
-        {/* Top Header / Brand Bar */}
-        <header className={`hero-header ${introStage >= 4 ? 'hero-header--visible' : ''}`}>
-          <div className="hero-header-left">
-            <div className="hero-brand__emblem">
-              <IconTerminal size={18} color="var(--cyber-neon)" />
-            </div>
-            <div className="hero-brand__text-group">
-              <span className="hero-brand__title">AIDEX '26</span>
-              <span className="hero-brand__sub">TECHNICAL ESCAPE ROOM</span>
-            </div>
-          </div>
-
-          <div className="hero-header-center">
-            <div className="hero-brand__node-pill">
-              <span className="hero-brand__pulse-dot" />
-              <span className="hero-brand__node-label">GATEWAY // ONLINE</span>
-            </div>
-          </div>
-
-          <div className="hero-header-right" />
-        </header>
-
-        {/* Central Hero Content */}
-        <div className="hero-content-container">
-          {/* Incident / Mission Status Tag */}
-          <div className={`hero-incident-chip ${introStage >= 3 ? 'hero-incident-chip--visible' : ''}`}>
-            <span className="hero-incident-chip__dot" />
-            <span>CLASSIFIED MISSION</span>
-          </div>
-
-          {/* Main Titles */}
-          <h1 className={`hero-main-title ${introStage >= 4 ? 'hero-main-title--visible' : ''}`}>
-            AIDEX '26
-          </h1>
-
-          <div className={`hero-subtitle ${introStage >= 4 ? 'hero-subtitle--visible' : ''}`}>
-            TECHNICAL ESCAPE ROOM
-          </div>
-
-          <p className={`hero-tagline ${introStage >= 5 ? 'hero-tagline--visible' : ''}`}>
-            "FIVE ROOMS. FIVE CHALLENGES. ONE WAY OUT."
-          </p>
-
-          <div className={`hero-down-arrow ${introStage >= 5 ? 'hero-down-arrow--visible' : ''}`}>↓</div>
-
-          {/* Operative Login Form - Access Required */}
-          <div className={`hero-form-card ${introStage >= 5 ? 'hero-form-card--visible' : ''}`}>
-            {/* Corner Bracket Accents */}
-            <div className="pc-bracket pc-bracket--tl" />
-            <div className="pc-bracket pc-bracket--tr" />
-            <div className="pc-bracket pc-bracket--bl" />
-            <div className="pc-bracket pc-bracket--br" />
-
-            {/* Header: Access Required */}
-            <div className="hero-card-header">
-              <div className="hero-card-header__title-row">
-                <div className="hero-card-header__left" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <IconLock size={18} color="var(--cyber-neon)" />
-                  <span className="hero-card-header__title">ACCESS TERMINAL</span>
-                </div>
-                <span className="hero-card-header__badge">CLASSIFIED MISSION ACCESS</span>
+          {/* Top Header / Brand Bar */}
+          <header className={`hero-header ${introStage >= 4 ? 'hero-header--visible' : ''}`}>
+            <div className="hero-header-left">
+              <div className="hero-brand__emblem">
+                <IconTerminal size={18} color="var(--cyber-neon)" />
+              </div>
+              <div className="hero-brand__text-group">
+                <span className="hero-brand__title">AIDEX '26</span>
+                <span className="hero-brand__sub">TECHNICAL ESCAPE ROOM</span>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-              <div className="hero-form-grid">
-                <div className="hero-input-group">
-                  <label className="hero-input-label" htmlFor="input-team-name">
-                    <span className="hero-input-label__prefix">▸ CALLSIGN:</span>
-                    <span>TEAM NAME</span>
-                  </label>
-                  <div className="hero-input-wrap">
-                    <input
-                      type="text"
-                      id="input-team-name"
-                      placeholder="ENTER TEAM NAME..."
-                      value={teamCallsign}
-                      onChange={(e) => {
-                        setTeamCallsign(e.target.value);
-                        setErrorMessage('');
-                      }}
-                      className="hero-input"
+            <div className="hero-header-center">
+              <div className="hero-brand__node-pill">
+                <span className="hero-brand__pulse-dot" />
+                <span className="hero-brand__node-label">GATEWAY // ONLINE</span>
+              </div>
+            </div>
+
+            <div className="hero-header-right" />
+          </header>
+
+          {/* Central Hero Content */}
+          <div className="hero-content-container">
+            {/* Incident / Mission Status Tag */}
+            <div className={`hero-incident-chip ${introStage >= 3 ? 'hero-incident-chip--visible' : ''}`}>
+              <span className="hero-incident-chip__dot" />
+              <span>CLASSIFIED MISSION</span>
+            </div>
+
+            {/* Main Titles */}
+            <h1 className={`hero-main-title ${introStage >= 4 ? 'hero-main-title--visible' : ''}`}>
+              AIDEX '26
+            </h1>
+
+            <div className={`hero-subtitle ${introStage >= 4 ? 'hero-subtitle--visible' : ''}`}>
+              TECHNICAL ESCAPE ROOM
+            </div>
+
+            <p className={`hero-tagline ${introStage >= 5 ? 'hero-tagline--visible' : ''}`}>
+              "FIVE ROOMS. FIVE CHALLENGES. ONE WAY OUT."
+            </p>
+
+            <div className={`hero-down-arrow ${introStage >= 5 ? 'hero-down-arrow--visible' : ''}`}>↓</div>
+
+            {/* Operative Login Form - Access Required */}
+            <div className={`hero-form-card ${introStage >= 5 ? 'hero-form-card--visible' : ''}`}>
+              {/* Corner Bracket Accents */}
+              <div className="pc-bracket pc-bracket--tl" />
+              <div className="pc-bracket pc-bracket--tr" />
+              <div className="pc-bracket pc-bracket--bl" />
+              <div className="pc-bracket pc-bracket--br" />
+
+              {/* Header: Access Required */}
+              <div className="hero-card-header">
+                <div className="hero-card-header__title-row">
+                  <div className="hero-card-header__left" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <IconLock size={18} color="var(--cyber-neon)" />
+                    <span className="hero-card-header__title">ACCESS TERMINAL</span>
+                  </div>
+                  <span className="hero-card-header__badge">CLASSIFIED MISSION ACCESS</span>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+                <div className="hero-form-grid">
+                  <div className="hero-input-group">
+                    <label className="hero-input-label" htmlFor="input-team-name">
+                      <span className="hero-input-label__prefix">▸ CALLSIGN:</span>
+                      <span>TEAM NAME</span>
+                    </label>
+                    <div className="hero-input-wrap">
+                      <input
+                        type="text"
+                        id="input-team-name"
+                        placeholder="ENTER TEAM NAME..."
+                        value={teamCallsign}
+                        onChange={(e) => {
+                          setTeamCallsign(e.target.value);
+                          setErrorMessage('');
+                        }}
+                        className="hero-input"
+                        disabled={isSubmitting}
+                        autoComplete="off"
+                        spellCheck="false"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="hero-input-group">
+                    <label className="hero-input-label" htmlFor="input-team-passcode">
+                      <span className="hero-input-label__prefix">▸ ACCESS KEY:</span>
+                      <span>PASSWORD</span>
+                    </label>
+                    <div className="hero-input-wrap">
+                      <input
+                        type="password"
+                        id="input-team-passcode"
+                        placeholder="ENTER TEAM PASSWORD..."
+                        value={teamPasscode}
+                        onChange={(e) => {
+                          setTeamPasscode(e.target.value);
+                          setErrorMessage('');
+                        }}
+                        className="hero-input"
+                        disabled={isSubmitting}
+                        autoComplete="current-password"
+                      />
+                    </div>
+                  </div>
+
+                  {errorMessage && (
+                    <div className="hero-error-banner" role="alert">
+                      <span className="hero-error-banner__icon">
+                        <IconAlert size={16} color="var(--cyber-red)" />
+                      </span>
+                      <span className="hero-error-banner__text">{errorMessage}</span>
+                    </div>
+                  )}
+
+                  <div className="hero-actions-row">
+                    <button
+                      type="submit"
+                      id="btn-enter-protocol"
+                      className="btn-enter-protocol"
                       disabled={isSubmitting}
-                      autoComplete="off"
-                      spellCheck="false"
-                    />
+                    >
+                      <span className="btn-enter-protocol__text">
+                        {isSubmitting
+                          ? 'AUTHENTICATING CLEARANCE...'
+                          : 'ACCESS MISSION'}
+                      </span>
+                      <span className="btn-enter-protocol__arrow">→</span>
+                    </button>
                   </div>
                 </div>
 
-                <div className="hero-input-group">
-                  <label className="hero-input-label" htmlFor="input-team-passcode">
-                    <span className="hero-input-label__prefix">▸ ACCESS KEY:</span>
-                    <span>PASSWORD</span>
-                  </label>
-                  <div className="hero-input-wrap">
-                    <input
-                      type="password"
-                      id="input-team-passcode"
-                      placeholder="ENTER TEAM PASSWORD..."
-                      value={teamPasscode}
-                      onChange={(e) => {
-                        setTeamPasscode(e.target.value);
-                        setErrorMessage('');
-                      }}
-                      className="hero-input"
-                      disabled={isSubmitting}
-                      autoComplete="current-password"
-                    />
-                  </div>
+                {/* Security Metadata Footer */}
+                <div className="hero-card-footer">
+                  <span>AUTH GATEWAY // SECURE TLS-AES256</span>
+                  <span className="hero-card-footer__ready">OPERATIVE READY</span>
                 </div>
+              </form>
+            </div>
 
-                {errorMessage && (
-                  <div className="hero-error-banner" role="alert">
-                    <span className="hero-error-banner__icon">
-                      <IconAlert size={16} color="var(--cyber-red)" />
-                    </span>
-                    <span className="hero-error-banner__text">{errorMessage}</span>
-                  </div>
-                )}
+            {/* Scroll / Mission Briefing Indicator directly below terminal */}
+            <div className={`hero-scroll-hint ${introStage >= 5 ? 'hero-scroll-hint--visible' : ''}`} onClick={() => {
+              document.getElementById('incident-section')?.scrollIntoView({ behavior: 'smooth' });
+            }}>
+              <span className="hero-scroll-hint__text">CLASSIFIED MISSION BRIEFING</span>
+              <span className="hero-scroll-hint__arrow">↓</span>
+            </div>
+          </div>
+        </section>
 
-                <div className="hero-actions-row">
-                  <button
-                    type="submit"
-                    id="btn-enter-protocol"
-                    className="btn-enter-protocol"
-                    disabled={isSubmitting}
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* 2. CLASSIFIED INCIDENT REPORT SECTION                               */}
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        <section className="landing-section landing-section--incident" id="incident-section">
+          <div className="landing-container">
+            <div className="incident-dossier-card">
+              <div className="incident-dossier-card__header">
+                <div className="incident-dossier-card__stamp">CLASSIFIED // TOP SECRET</div>
+                <div className="incident-dossier-card__meta">
+                  <span>SYSTEM: LATVERIA-NET</span>
+                  <span>INCIDENT ID: DOOM-26</span>
+                  <span>STATUS: ACTIVE BREACH</span>
+                  <span>THREAT LEVEL: OMEGA</span>
+                </div>
+              </div>
+
+              <div className="incident-dossier-card__body">
+                <div className="incident-terminal-line incident-terminal-line--lead">
+                  <span className="terminal-prefix">&gt;</span>
+                  <span className="terminal-text">Something has breached the system.</span>
+                </div>
+                <div className="incident-terminal-line">
+                  <span className="terminal-prefix">&gt;</span>
+                  <span className="terminal-text">Ten encrypted chambers stand between the operative and system recovery.</span>
+                </div>
+                <div className="incident-terminal-line">
+                  <span className="terminal-prefix">&gt;</span>
+                  <span className="terminal-text">Every sector contains an authoritative computer science trial.</span>
+                </div>
+                <div className="incident-terminal-line">
+                  <span className="terminal-prefix">&gt;</span>
+                  <span className="terminal-text">Failure closes the access corridor permanently.</span>
+                </div>
+                <div className="incident-terminal-line incident-terminal-line--highlight">
+                  <span className="terminal-prefix">&gt;</span>
+                  <span className="terminal-text">Find the breach. Break the protocol. Unmask the anomaly.</span>
+                  <span className="terminal-cursor">█</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* 3. THE PROTOCOL & TWO-SESSION COMPETITION RULES                     */}
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        <section className="landing-section landing-section--protocol">
+          <div className="landing-container">
+            <div className="section-head">
+              <span className="section-eyebrow">OPERATIONAL BLUEPRINT</span>
+              <h2 className="section-title">THE TWO-SESSION BATTLEWORLD PROTOCOL</h2>
+              <p className="section-desc">
+                A synchronized, admin-governed competition architecture engineered for 50+ concurrent operatives.
+              </p>
+            </div>
+
+            <div className="protocol-grid">
+              <div className="protocol-card">
+                <div className="protocol-card__badge">SESSION 01</div>
+                <h3 className="protocol-card__title">AVENGERS TOWER CORE</h3>
+                <div className="protocol-card__chambers">CHAMBERS 01 — 05</div>
+                <p className="protocol-card__text">
+                  Operatives breach the perimeter. Unlocks only when the Game Master authorizes the signal. Individual countdown timers begin immediately.
+                </p>
+                <ul className="protocol-card__list">
+                  <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Round-robin scheduling & dispatch audits</li>
+                  <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Relational schema normalization</li>
+                  <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Dijkstra weighted reactor traversal</li>
+                  <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Stack & queue sequential container parsing</li>
+                </ul>
+              </div>
+
+              <div className="protocol-card protocol-card--s2">
+                <div className="protocol-card__badge protocol-card__badge--s2">SESSION 02</div>
+                <h3 className="protocol-card__title">INNER SANCTUM PROTOCOLS</h3>
+                <div className="protocol-card__chambers">CHAMBERS 06 — 10</div>
+                <p className="protocol-card__text">
+                  Locked behind Doctor Doom's secondary barrier until authorized. Remaining 5 assigned questions reveal dynamically.
+                </p>
+                <ul className="protocol-card__list">
+                  <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Coffman deadlock circular-wait mitigation</li>
+                  <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Deterministic finite automata decoding</li>
+                  <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Bitwise masking & permission registers</li>
+                  <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Asymptotic complexity performance audit</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* 4. SECTORS / CHAMBERS SHOWCASE                                      */}
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        <section className="landing-section landing-section--sectors">
+          <div className="landing-container">
+            <div className="section-head">
+              <span className="section-eyebrow">SURVEILLANCE TELEMETRY</span>
+              <h2 className="section-title">10 CLASSIFIED SYSTEM SECTORS</h2>
+              <p className="section-desc">
+                Hover over any sector to initiate optical telemetry scan. Questions are uniquely randomized per team from our server vault.
+              </p>
+            </div>
+
+            <div className="sectors-grid">
+              {sectors.map((sec) => {
+                const isHovered = hoveredSector === sec.id;
+                return (
+                  <div
+                    key={sec.id}
+                    className={`sector-card ${isHovered ? 'sector-card--active' : ''}`}
+                    onMouseEnter={() => setHoveredSector(sec.id)}
+                    onMouseLeave={() => setHoveredSector(null)}
                   >
-                    <span className="btn-enter-protocol__text">
-                      {isSubmitting
-                        ? 'AUTHENTICATING CLEARANCE...'
-                        : 'ACCESS MISSION'}
-                    </span>
-                    <span className="btn-enter-protocol__arrow">→</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Security Metadata Footer */}
-              <div className="hero-card-footer">
-                <span>AUTH GATEWAY // SECURE TLS-AES256</span>
-                <span className="hero-card-footer__ready">OPERATIVE READY</span>
-              </div>
-            </form>
-          </div>
-
-          {/* Scroll / Mission Briefing Indicator directly below terminal */}
-          <div className={`hero-scroll-hint ${introStage >= 5 ? 'hero-scroll-hint--visible' : ''}`} onClick={() => {
-            document.getElementById('incident-section')?.scrollIntoView({ behavior: 'smooth' });
-          }}>
-            <span className="hero-scroll-hint__text">CLASSIFIED MISSION BRIEFING</span>
-            <span className="hero-scroll-hint__arrow">↓</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* 2. CLASSIFIED INCIDENT REPORT SECTION                               */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      <section className="landing-section landing-section--incident" id="incident-section">
-        <div className="landing-container">
-          <div className="incident-dossier-card">
-            <div className="incident-dossier-card__header">
-              <div className="incident-dossier-card__stamp">CLASSIFIED // TOP SECRET</div>
-              <div className="incident-dossier-card__meta">
-                <span>SYSTEM: LATVERIA-NET</span>
-                <span>INCIDENT ID: DOOM-26</span>
-                <span>STATUS: ACTIVE BREACH</span>
-                <span>THREAT LEVEL: OMEGA</span>
-              </div>
-            </div>
-
-            <div className="incident-dossier-card__body">
-              <div className="incident-terminal-line incident-terminal-line--lead">
-                <span className="terminal-prefix">&gt;</span>
-                <span className="terminal-text">Something has breached the system.</span>
-              </div>
-              <div className="incident-terminal-line">
-                <span className="terminal-prefix">&gt;</span>
-                <span className="terminal-text">Ten encrypted chambers stand between the operative and system recovery.</span>
-              </div>
-              <div className="incident-terminal-line">
-                <span className="terminal-prefix">&gt;</span>
-                <span className="terminal-text">Every sector contains an authoritative computer science trial.</span>
-              </div>
-              <div className="incident-terminal-line">
-                <span className="terminal-prefix">&gt;</span>
-                <span className="terminal-text">Failure closes the access corridor permanently.</span>
-              </div>
-              <div className="incident-terminal-line incident-terminal-line--highlight">
-                <span className="terminal-prefix">&gt;</span>
-                <span className="terminal-text">Find the breach. Break the protocol. Unmask the anomaly.</span>
-                <span className="terminal-cursor">█</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* 3. THE PROTOCOL & TWO-SESSION COMPETITION RULES                     */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      <section className="landing-section landing-section--protocol">
-        <div className="landing-container">
-          <div className="section-head">
-            <span className="section-eyebrow">OPERATIONAL BLUEPRINT</span>
-            <h2 className="section-title">THE TWO-SESSION BATTLEWORLD PROTOCOL</h2>
-            <p className="section-desc">
-              A synchronized, admin-governed competition architecture engineered for 50+ concurrent operatives.
-            </p>
-          </div>
-
-          <div className="protocol-grid">
-            <div className="protocol-card">
-              <div className="protocol-card__badge">SESSION 01</div>
-              <h3 className="protocol-card__title">AVENGERS TOWER CORE</h3>
-              <div className="protocol-card__chambers">CHAMBERS 01 — 05</div>
-              <p className="protocol-card__text">
-                Operatives breach the perimeter. Unlocks only when the Game Master authorizes the signal. Individual countdown timers begin immediately.
-              </p>
-              <ul className="protocol-card__list">
-                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Round-robin scheduling & dispatch audits</li>
-                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Relational schema normalization</li>
-                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Dijkstra weighted reactor traversal</li>
-                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Stack & queue sequential container parsing</li>
-              </ul>
-            </div>
-
-            <div className="protocol-card protocol-card--s2">
-              <div className="protocol-card__badge protocol-card__badge--s2">SESSION 02</div>
-              <h3 className="protocol-card__title">INNER SANCTUM PROTOCOLS</h3>
-              <div className="protocol-card__chambers">CHAMBERS 06 — 10</div>
-              <p className="protocol-card__text">
-                Locked behind Doctor Doom's secondary barrier until authorized. Remaining 5 assigned questions reveal dynamically.
-              </p>
-              <ul className="protocol-card__list">
-                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Coffman deadlock circular-wait mitigation</li>
-                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Deterministic finite automata decoding</li>
-                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Bitwise masking & permission registers</li>
-                <li><IconCheck size={13} color="var(--cyber-neon)" style={{ marginRight: '6px' }} /> Asymptotic complexity performance audit</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* 4. SECTORS / CHAMBERS SHOWCASE                                      */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      <section className="landing-section landing-section--sectors">
-        <div className="landing-container">
-          <div className="section-head">
-            <span className="section-eyebrow">SURVEILLANCE TELEMETRY</span>
-            <h2 className="section-title">10 CLASSIFIED SYSTEM SECTORS</h2>
-            <p className="section-desc">
-              Hover over any sector to initiate optical telemetry scan. Questions are uniquely randomized per team from our server vault.
-            </p>
-          </div>
-
-          <div className="sectors-grid">
-            {sectors.map((sec) => {
-              const isHovered = hoveredSector === sec.id;
-              return (
-                <div
-                  key={sec.id}
-                  className={`sector-card ${isHovered ? 'sector-card--active' : ''}`}
-                  onMouseEnter={() => setHoveredSector(sec.id)}
-                  onMouseLeave={() => setHoveredSector(null)}
-                >
-                  <div className="sector-card__scan-beam" />
-                  <div className="sector-card__top">
-                    <span className="sector-card__id">SECTOR {sec.id}</span>
-                    <span className="sector-card__status">{sec.status}</span>
+                    <div className="sector-card__scan-beam" />
+                    <div className="sector-card__top">
+                      <span className="sector-card__id">SECTOR {sec.id}</span>
+                      <span className="sector-card__status">{sec.status}</span>
+                    </div>
+                    <h4 className="sector-card__title">{sec.title}</h4>
+                    <div className="sector-card__sub">{sec.subtitle}</div>
+                    <div className="sector-card__footer">
+                      <span className="sector-card__cat">{sec.category}</span>
+                      <span className="sector-card__lock" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <IconLock size={12} color={isHovered ? 'var(--cyber-neon)' : 'var(--cyber-muted)'} />
+                        <span>{isHovered ? 'ACCESS RESTRICTED' : 'ENCRYPTED'}</span>
+                      </span>
+                    </div>
                   </div>
-                  <h4 className="sector-card__title">{sec.title}</h4>
-                  <div className="sector-card__sub">{sec.subtitle}</div>
-                  <div className="sector-card__footer">
-                    <span className="sector-card__cat">{sec.category}</span>
-                    <span className="sector-card__lock" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                      <IconLock size={12} color={isHovered ? 'var(--cyber-neon)' : 'var(--cyber-muted)'} />
-                      <span>{isHovered ? 'ACCESS RESTRICTED' : 'ENCRYPTED'}</span>
-                    </span>
-                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* 5. LIVE LEADERBOARD PREVIEW SECTION                                 */}
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        <section className="landing-section landing-section--leaderboard">
+          <div className="landing-container">
+            <div className="section-head">
+              <span className="section-eyebrow">SATELLITE TELEMETRY</span>
+              <h2 className="section-title">ACTIVE SATELLITE LEADERBOARD</h2>
+              <p className="section-desc">
+                Real-time authoritative ranking based on Total Score (Highest) → Total Server Time (Lowest).
+              </p>
+            </div>
+
+            <div className="landing-leaderboard-card">
+              {loadingLeaderboard ? (
+                <div className="landing-leaderboard-empty">
+                  <span className="waiting-card__spinner">▌</span> RETRIEVING TELEMETRY DATA...
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* 5. LIVE LEADERBOARD PREVIEW SECTION                                 */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      <section className="landing-section landing-section--leaderboard">
-        <div className="landing-container">
-          <div className="section-head">
-            <span className="section-eyebrow">SATELLITE TELEMETRY</span>
-            <h2 className="section-title">ACTIVE SATELLITE LEADERBOARD</h2>
-            <p className="section-desc">
-              Real-time authoritative ranking based on Total Score (Highest) → Total Server Time (Lowest).
-            </p>
-          </div>
-
-          <div className="landing-leaderboard-card">
-            {loadingLeaderboard ? (
-              <div className="landing-leaderboard-empty">
-                <span className="waiting-card__spinner">▌</span> RETRIEVING TELEMETRY DATA...
-              </div>
-            ) : leaderboardData.length === 0 ? (
-              <div className="landing-leaderboard-empty">
-                NO REGISTERED OPERATIVE SCORES YET. THE BATTLEWORLD PROTOCOL STANDS READY.
-              </div>
-            ) : (
-              <div className="leaderboard-table-wrap">
-                <table className="leaderboard-table">
-                  <thead>
-                    <tr>
-                      <th>RANK</th>
-                      <th>TEAM CALLSIGN</th>
-                      <th>SESSION 1</th>
-                      <th>SESSION 2</th>
-                      <th>TOTAL SCORE</th>
-                      <th>STATUS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {leaderboardData.map((row) => (
-                      <tr key={row.participantId} className="leaderboard-row">
-                        <td className="leaderboard-cell--rank" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          {row.rank === 1 ? (
-                            <><IconTrophy size={14} color="#ffd700" /> #01</>
-                          ) : row.rank === 2 ? (
-                            <><IconTrophy size={14} color="#c0c0c0" /> #02</>
-                          ) : row.rank === 3 ? (
-                            <><IconTrophy size={14} color="#cd7f32" /> #03</>
-                          ) : (
-                            `#${String(row.rank).padStart(2, '0')}`
-                          )}
-                        </td>
-                        <td className="leaderboard-cell--team">{row.teamName}</td>
-                        <td>{row.session1Score} / 15</td>
-                        <td>{row.session2Score} / 15</td>
-                        <td className="leaderboard-cell--total-score">{row.totalScore} / 30</td>
-                        <td>
-                          <span className={`leaderboard-status-tag ${row.isComplete ? 'leaderboard-status-tag--done' : 'leaderboard-status-tag--progress'}`}>
-                            {row.isComplete ? '● COMPLETE' : '● IN PROGRESS'}
-                          </span>
-                        </td>
+              ) : leaderboardData.length === 0 ? (
+                <div className="landing-leaderboard-empty">
+                  NO REGISTERED OPERATIVE SCORES YET. THE BATTLEWORLD PROTOCOL STANDS READY.
+                </div>
+              ) : (
+                <div className="leaderboard-table-wrap">
+                  <table className="leaderboard-table">
+                    <thead>
+                      <tr>
+                        <th>RANK</th>
+                        <th>TEAM CALLSIGN</th>
+                        <th>SESSION 1</th>
+                        <th>SESSION 2</th>
+                        <th>TOTAL SCORE</th>
+                        <th>STATUS</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* 6. FINAL TERMINAL CALL TO ACTION SECTION                            */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      <section className="landing-section landing-section--cta">
-        <div className="landing-container" style={{ textAlign: 'center' }}>
-          <div className="final-cta-card">
-            <span className="final-cta-card__glyph">
-              <IconShield size={36} color="var(--cyber-neon)" />
-            </span>
-            <h2 className="final-cta-card__title">READY TO BREACH BATTLEWORLD?</h2>
-            <p className="final-cta-card__desc">
-              Your randomized 10-chamber protocol awaits. Enter your operative callsign and prepare for intrusion.
-            </p>
-            <button className="btn-enter-protocol btn-enter-protocol--lg" onClick={scrollToHero}>
-              <span className="btn-enter-protocol__text">INITIATE PROTOCOL CLEARANCE</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {/* CINEMATIC BREACH TRANSITION OVERLAY                                 */}
-      {/* ─────────────────────────────────────────────────────────────────── */}
-      {isTransitioning && (
-        <div className="cinematic-breach-transition">
-          <div className="cinematic-breach-transition__scanline" />
-          <div className="cinematic-breach-transition__content">
-            <div className="cinematic-breach-transition__spinner">
-              <IconTerminal size={24} color="var(--cyber-neon)" />
+                    </thead>
+                    <tbody>
+                      {leaderboardData.map((row) => (
+                        <tr key={row.participantId} className="leaderboard-row">
+                          <td className="leaderboard-cell--rank" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            {row.rank === 1 ? (
+                              <><IconTrophy size={14} color="#ffd700" /> #01</>
+                            ) : row.rank === 2 ? (
+                              <><IconTrophy size={14} color="#c0c0c0" /> #02</>
+                            ) : row.rank === 3 ? (
+                              <><IconTrophy size={14} color="#cd7f32" /> #03</>
+                            ) : (
+                              `#${String(row.rank).padStart(2, '0')}`
+                            )}
+                          </td>
+                          <td className="leaderboard-cell--team">{row.teamName}</td>
+                          <td>{row.session1Score} / 15</td>
+                          <td>{row.session2Score} / 15</td>
+                          <td className="leaderboard-cell--total-score">{row.totalScore} / 30</td>
+                          <td>
+                            <span className={`leaderboard-status-tag ${row.isComplete ? 'leaderboard-status-tag--done' : 'leaderboard-status-tag--progress'}`}>
+                              {row.isComplete ? '● COMPLETE' : '● IN PROGRESS'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
-            <div className="cinematic-breach-transition__title">ACCESSING DOOM PROTOCOL...</div>
-            <div className="cinematic-breach-transition__sub">SYNCHRONIZING SERVER TIME & RANDOMIZING SECTORS</div>
           </div>
-        </div>
-      )}
+        </section>
+
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* 6. FINAL TERMINAL CALL TO ACTION SECTION                            */}
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        <section className="landing-section landing-section--cta">
+          <div className="landing-container" style={{ textAlign: 'center' }}>
+            <div className="final-cta-card">
+              <span className="final-cta-card__glyph">
+                <IconShield size={36} color="var(--cyber-neon)" />
+              </span>
+              <h2 className="final-cta-card__title">READY TO BREACH BATTLEWORLD?</h2>
+              <p className="final-cta-card__desc">
+                Your randomized 10-chamber protocol awaits. Enter your operative callsign and prepare for intrusion.
+              </p>
+              <button className="btn-enter-protocol btn-enter-protocol--lg" onClick={scrollToHero}>
+                <span className="btn-enter-protocol__text">INITIATE PROTOCOL CLEARANCE</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {/* CINEMATIC BREACH TRANSITION OVERLAY                                 */}
+        {/* ─────────────────────────────────────────────────────────────────── */}
+        {isTransitioning && (
+          <div className="cinematic-breach-transition">
+            <div className="cinematic-breach-transition__scanline" />
+            <div className="cinematic-breach-transition__content">
+              <div className="cinematic-breach-transition__spinner">
+                <IconTerminal size={24} color="var(--cyber-neon)" />
+              </div>
+              <div className="cinematic-breach-transition__title">ACCESSING DOOM PROTOCOL...</div>
+              <div className="cinematic-breach-transition__sub">SYNCHRONIZING SERVER TIME & RANDOMIZING SECTORS</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
