@@ -1,6 +1,7 @@
 /**
  * Server-Authoritative Timer Synchronization Utility
  * Calculates exact countdown from server timestamps and client clock offset.
+ * Supports per-participant timers and on-hold states.
  */
 
 export class TimerSynchronizer {
@@ -8,9 +9,11 @@ export class TimerSynchronizer {
     this.clockOffset = 0; // serverTime - clientLocalTime
     this.sessionStartTime = null;
     this.sessionEndTime = null;
-    this.durationMinutes = 30;
+    this.durationMinutes = 60;
     this.timerPaused = false;
     this.timerPausedAt = null;
+    this.participantStarted = false;
+    this.timerOnHold = true;
     this.status = 'CLOSED';
     this.listeners = new Set();
   }
@@ -27,11 +30,13 @@ export class TimerSynchronizer {
     }
 
     this.status = eventState.status || 'CLOSED';
-    this.durationMinutes = Number(eventState.session_duration_minutes) || 30;
+    this.durationMinutes = Number(eventState.session_duration_minutes) || 60;
     this.sessionStartTime = eventState.session_start_time || null;
     this.sessionEndTime = eventState.session_end_time || null;
     this.timerPaused = Boolean(eventState.timer_paused);
     this.timerPausedAt = eventState.timer_paused_at || null;
+    this.participantStarted = Boolean(eventState.participant_started);
+    this.timerOnHold = Boolean(eventState.timer_on_hold);
 
     this.notifyListeners();
   }
@@ -52,7 +57,8 @@ export class TimerSynchronizer {
       return this.durationMinutes * 60;
     }
 
-    if (!this.sessionEndTime) {
+    // Timer is on hold until participant explicitly starts
+    if (this.timerOnHold || !this.participantStarted || !this.sessionEndTime) {
       return this.durationMinutes * 60;
     }
 
@@ -80,6 +86,7 @@ export class TimerSynchronizer {
   isExpired() {
     const isSessionActive = this.status === 'SESSION_1_ACTIVE' || this.status === 'SESSION_2_ACTIVE';
     if (!isSessionActive) return false;
+    if (this.timerOnHold || !this.participantStarted) return false;
     return this.getRemainingSeconds() <= 0;
   }
 
@@ -96,3 +103,4 @@ export class TimerSynchronizer {
 }
 
 export const timerSynchronizer = new TimerSynchronizer();
+

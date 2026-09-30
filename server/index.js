@@ -361,6 +361,25 @@ app.post('/api/participant/join', async (req, res) => {
 // SESSION & QUESTION APIS
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Start participant session (starts individual countdown timer)
+const handleStartSession = async (req, res) => {
+  try {
+    const sessionNum = parseInt(req.params.sessionNum, 10) || 1;
+    const eventState = await Database.startParticipantSession(req.participant.id, sessionNum);
+    broadcastEvent('PARTICIPANT_STARTED_SESSION', { participantId: req.participant.id, teamName: req.participant.teamName, sessionNum });
+    res.json({
+      success: true,
+      sessionNumber: sessionNum,
+      eventState
+    });
+  } catch (err) {
+    res.status(400).json({ error: 'START_FAILED', message: err.message });
+  }
+};
+
+app.post('/api/session/:sessionNum/start', participantAuth, handleStartSession);
+app.post('/api/session/start', participantAuth, handleStartSession);
+
 // Get questions for active session (Sanitized)
 app.get('/api/session/:sessionNum/questions', participantAuth, async (req, res) => {
   try {

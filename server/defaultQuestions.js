@@ -12,10 +12,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The resistance strike team breaches a damaged subterranean security outpost situated at the outer perimeter of Doctor Doom's royal citadel. Heavy titanium blast gates seal off the main passage, their locking pins held in place by an active automated power conduit connected to an illuminated diagnostic terminal.",
       "An encrypted maintenance log recovered from a fallen technician's datapad explains that the gate's operating firmware continuously evaluates incoming authorization credentials before deciding on an action. Rather than relying on unpredictable cosmic power, the entire locking mechanism is governed by an automated, deterministic logical evaluation rule.",
       "When the team inserts a valid biometric token into the optical scanner, the hydraulic pins instantly retract with a loud hiss, allowing clearance. However, when an unrecognized token is tested, the terminal flashes crimson, emits a deafening alarm horn, and charges perimeter defense turrets.",
-      "The terminal screen begins a countdown sequence, threatening an unrecoverable system lockdown. To override the gate and unlock the corridor, what foundational programming decision structure must the team submit to the terminal?"
+      "A locked corridor where every storage cell sits side-by-side in uninterrupted physical alignment, accessible in a single tick if you know its exact numeric offset from the threshold. Name this foundational contiguous construct."
     ],
     "codeLines": [],
-    "question": "What basic programming concept makes the gate choose different actions based on a condition?",
+    "question": "Name the contiguous, index-addressable storage structure that grants instantaneous direct access to any slot.",
     "hints": [
       {
         "text": "Focus on the two-branch conditional choice.",
@@ -60,10 +60,10 @@ export const DEFAULT_20_QUESTIONS = [
       "Deep inside an abandoned communications bunker, an automated broadcast tower is pulsing high-voltage energy waves across the ruined sector. Multiple CRT monitors mounted across the central console display a relentless waterfall of telemetry packets cycling without pause.",
       "The team reviews the subsystem telemetry to understand why the transmitter refuses to power down despite the citadel's primary grid failure. A recovered maintenance manual confirms that the broadcast routine was specifically configured to repeat an identical series of instructions autonomously until interrupted.",
       "Oscilloscope readings reveal the exact same sequence executing continuously: preparing transmission buffers, emitting the microwave pulse, decrementing the counter, and immediately checking whether the active signal flag remains set before restarting.",
-      "Energy spikes in the broadcast dish are surging toward an explosive overload that will obliterate the bunker. What fundamental programming control structure used for repeating instructions must the squad enter to shut down the broadcast cycle?"
+      "A vertical containment silo where the newest energy crystal deposited is the only one you can reach, trapping everything beneath until the summit is cleared. What sacred reverse-order mechanism governs this chamber?"
     ],
     "codeLines": [],
-    "question": "What programming concept repeats instructions until a condition tells it to stop?",
+    "question": "Which disciplinary architecture forces the latest arrival to depart before anyone beneath can escape?",
     "hints": [
       {
         "text": "Focus on the repeated execution cycle.",
@@ -108,10 +108,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The team enters a heavily reinforced subterranean vault housing rows of glowing plasma canisters. Each storage compartment along the metallic wall is etched with a consecutive numeric identifier starting strictly from position zero across the entire partition.",
       "An automated robotic arm responds to commands typed into the console. The control program does not need to traverse every canister sequentially; entering a specific numeric index allows the arm to calculate the exact physical memory offset and extract the container instantly in constant time.",
       "Technical schematics describe the storage area as a contiguous block in hardware memory where items of uniform size and data type reside side by side in fixed, addressable slots without any gaps.",
-      "A containment alarm begins flashing as the magnetic stabilizing fields decay. What foundational programming structure storing indexed collections at consecutive positions must the resistance submit to release the lock?"
+      "A conveyor conduit where early arrivals claim total precedence—entrance at the tail, exit at the head, with zero line-jumping permitted under Doom's law. Identify this unyielding transit convention."
     ],
     "codeLines": [],
-    "question": "What programming structure stores multiple values in numbered positions?",
+    "question": "Identify the orderly conduit where chronological arrival dictates absolute priority of extraction.",
     "hints": [
       {
         "text": "Focus on contiguous index-based storage.",
@@ -155,10 +155,10 @@ export const DEFAULT_20_QUESTIONS = [
       "Inside Doom's heavy artillery silo, the resistance discovers a vertical pneumatic launch tube loaded with experimental plasma warheads. The narrow vertical shaft possesses only a single top hatch used for both ammunition loading and launch deployment.",
       "Maintenance schematics explain that whenever a fresh warhead arrives from the factory, it is lowered directly on top of all previously loaded units. When firing commands trigger, the mechanical loader can only eject the uppermost weapon that was loaded most recently.",
       "Technicians cannot retrieve older ordnance resting at the bottom of the tube without first extracting every single warhead placed above them one by one in reverse order of arrival.",
-      "The silo's automated targeting computer is arming for an unauthorized launch. What fundamental data structure governing this order of operations where the newest item leaves first must the team identify to safely disarm the warheads?"
+      "A temporal paradox protocol: the final byte written into the core is the first to be consumed, while the pioneer entry waits at the bottom of time. Enter the 4-letter operational standard."
     ],
     "codeLines": [],
-    "question": "What data structure removes the most recently added item first?",
+    "question": "What four-letter operational principle dictates that the newest entry is consumed first?",
     "hints": [
       {
         "text": "Think about Last-In, First-Out (LIFO) behavior.",
@@ -201,10 +201,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The squad discovers an automated decontamination airlock where evacuated civilians gather during citadel alert conditions. An automated robotic gatekeeper strictly regulates passage through the narrow processing corridor.",
       "Surveillance records reveal that incoming individuals must join at the rear of the hallway. The exit gate opens solely for the person who has been waiting the longest, processing each occupant in the exact chronological sequence of their arrival.",
       "No line-jumping or backward retrieval is permitted by the system; entry occurs strictly at the rear, while exit occurs strictly from the front without exception, maintaining absolute order.",
-      "Toxic gas is venting into the vestibule as containment fails around the refugees. To override the airlock gatekeeper and evacuate everyone safely, what core data structure managing this first-arrival-first-served sequence must the team enter?"
+      "The ancient ethical protocol of computational throughput: whoever knocked on the gate first shall be the first delivered through the breach. Enter the 4-letter acronym."
     ],
     "codeLines": [],
-    "question": "What data structure serves the item that entered first?",
+    "question": "What four-letter scheduling doctrine ensures strict chronological equity for every waiting packet?",
     "hints": [
       {
         "text": "Think about First-In, First-Out (FIFO) processing.",
@@ -247,10 +247,10 @@ export const DEFAULT_20_QUESTIONS = [
       "An explosion inside the central records facility scattered thousands of numbered data cartridges across the archive floor in complete disarray. The index catalog is paralyzed until order is restored.",
       "A restoration script initiates on the main console. It methodically examines adjacent pairs of records, swaps their positions when out of sequence, and steadily transforms the chaotic pile into an organized lineup.",
       "After several systematic passes across the dataset, every cartridge sits in ascending numerical sequence from lowest security clearance to highest, making lookups possible again across the citadel network.",
-      "The main archive index requires terminal confirmation before it re-engages the defense mainframe. What fundamental algorithmic operation that rearranges unsorted elements into a designated sequential order must the team submit?"
+      "Disordered cosmic debris lies scattered across the buffer. To align the resonance matrix, every entry must find its strictly monotonic position relative to its neighbors. What transformative algorithmic discipline is required?"
     ],
     "codeLines": [],
-    "question": "What operation rearranges values into a chosen order?",
+    "question": "What systematic procedure transforms chaos into strict monotonic alignment?",
     "hints": [
       {
         "text": "Think of Quick, Merge, or Bubble algorithms.",
@@ -293,10 +293,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The resistance needs an emergency override code hidden within an unsorted list of millions of security event logs. The archive completely lacks index trees or pre-sorted keys.",
       "The scanning tool begins at the very first log entry in memory. It compares the target code against record 0, moves to record 1, and continues checking each consecutive record one by one across the entire file.",
       "If the target item is located near the very end, the scanner must inspect every single element before finding a match, producing an O(n) execution time profile across the unsorted entries.",
-      "The system demands the exact technical method being used before it displays the override key. What fundamental search technique inspecting items one by one sequentially is the scanner executing?"
+      "No indices, no tree branches, no pre-sorted shortcuts—the optic sensor is doomed to inspect every single chamber in raw unbroken sequence from index zero until destiny is found or exhausted. Name this brute-force expedition."
     ],
     "codeLines": [],
-    "question": "What search checks items one by one until the target is found?",
+    "question": "What exhaustive inspection routine marches through every item sequentially without skipping?",
     "hints": [
       {
         "text": "Sequential examination from start to finish.",
@@ -339,10 +339,10 @@ export const DEFAULT_20_QUESTIONS = [
       "A navigational terminal contains a massive sorted database of planetary warp coordinates. Because the dataset is enormous, standard sequential checking is too slow to escape incoming patrol drones.",
       "The scanner jumps directly to the midpoint of the sorted list. If the target frequency is smaller than the middle value, it completely eliminates the upper half; if larger, it discards the lower half.",
       "By repeatedly dividing the remaining search interval in half, the terminal locates any key across a million entries in around twenty steps, demonstrating logarithmic efficiency.",
-      "Patrol drones are closing in on the terminal room with heavy blasters armed. What logarithmic divide-and-conquer search algorithm must the resistance invoke to rapidly lock in the warp coordinates?"
+      "Faced with a billion sorted star-gates, the navigator inspects the exact center, slices the universe in two, discards half of existence in a single cycle, and repeats. Name this swift halving discipline."
     ],
     "codeLines": [],
-    "question": "What search method repeatedly divides a sorted list into halves?",
+    "question": "What logarithmic strategy cuts the search space in half with every single comparison?",
     "hints": [
       {
         "text": "Requires a sorted collection and divide-and-conquer logic.",
@@ -384,10 +384,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The resistance encounters a nested security cipher consisting of concentric dimensional locks. The outer lock mechanism contains an identical smaller lock inside it, repeating into miniature layers.",
       "The decryption program uses an elegant routine: to solve the puzzle of size N, it calls an instance of itself to solve size N-1, pushing each pending call onto the call stack.",
       "When the inner problem reaches the smallest base case (size 0), the chain stops and returns calculated values back up through the hierarchy to solve the overall problem.",
-      "The lock interface requires identifying the computational design pattern in use. What programming technique solves complex problems by having a function invoke smaller versions of itself until reaching a base condition?"
+      "An infinite mirror chamber where a ritual solves itself by summoning a tinier replica of its own spirit, descending through nested reflections until hitting the bedrock of a base reality. Name this computational ouroboros."
     ],
     "codeLines": [],
-    "question": "What programming technique solves a problem using smaller versions of itself?",
+    "question": "What self-referential paradigm resolves grand enigmas by invoking smaller reflections of itself?",
     "hints": [
       {
         "text": "A self-referencing function that requires a base case to terminate.",
@@ -430,10 +430,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The central garrison relational database catalogues millions of cyborg soldiers and resistance operatives across Battleworld. Many soldiers share identical names, ranks, and unit designations.",
       "To prevent ambiguity and catastrophic data corruption, the database architect established a mandatory column constraint. Every single record is assigned an immutable, non-null value that cannot be duplicated anywhere in the table.",
       "Querying this specific attribute guarantees retrieving exactly one unique row with absolute certainty across the entire relational database system.",
-      "The database console locks until the administrator identifies the integrity constraint. What database concept guarantees unique record identification and disallows null values across a relational table?"
+      "Within Doom's citizen ledger, no two souls may share this attribute, nor may it ever dissolve into the void of null. It is the unyielding singular anchor of relational identity. Enter its name."
     ],
     "codeLines": [],
-    "question": "What database concept gives each record a unique identifier?",
+    "question": "What relational constraint acts as the unique, non-null anchor for every row in a table?",
     "hints": [
       {
         "text": "Unique and NOT NULL constraint on a database table column.",
@@ -476,10 +476,10 @@ export const DEFAULT_20_QUESTIONS = [
       "Inside Doom's robotics laboratory, engineers inspect the software blueprints for the citadel's defense automatons. The base architecture defines a parent Sentinel class containing core attributes like armor rating and navigation routines.",
       "When engineers designed specialized units like the FlightSentinel and PlasmaSentinel, they did not rewrite common code from scratch. Instead, the new classes derived directly from the base Sentinel class.",
       "The derived subclasses automatically received all baseline properties while adding their own specialized weapons and behavior overrides.",
-      "To reprogram the robotic guards before they activate, what core object-oriented principle enabling child classes to receive attributes and methods from an existing parent class must be entered?"
+      "A legacy protocol encoded in the archetype blueprint: rather than forging newborn sentinels from scratch, offspring constructs automatically receive the armor, weaponry, and traits of their ancestral progenitor. Name this generational transmission pillar."
     ],
     "codeLines": [],
-    "question": "What OOP concept lets one class receive features from another class?",
+    "question": "What foundational OOP pillar allows descendant entities to automatically acquire the traits and behaviors of their progenitor?",
     "hints": [
       {
         "text": "Parent-child relationship in object-oriented programming.",
@@ -521,10 +521,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The central defense console dispatches a single broadcast signal: `executeMission()` to an array of different military units including Drone, Turret, and Mech.",
       "Rather than requiring individual commands for every unit type, each distinct object responds appropriately to the exact same method call: the Drone takes flight, the Turret rotates its cannons, and the Mech engages kinetic shields.",
       "The underlying controller interacts with all objects through a uniform interface without needing to know their specific concrete implementations at compile time.",
-      "The mainframe terminal requests verification of this architectural behavior. What OOP principle allows a single interface or method call to take many different functional forms depending on the object?"
+      "A single command string—'ENGAGE'—is broadcast across the fleet, yet the drone fires lasers, the golem raises a shield, and the phantom vanishes into shadows. One invocation, endless morphing manifestations. Enter the Greek-rooted pillar."
     ],
     "codeLines": [],
-    "question": "What OOP concept lets the same operation behave differently for different objects?",
+    "question": "What Greek-derived OOP concept allows a single uniform interface to trigger vastly different behaviors depending on the receiving entity?",
     "hints": [
       {
         "text": "Greek term meaning 'many forms'.",
@@ -566,10 +566,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The citadel's primary antimatter reactor is governed by a secure software module. Diagnostic tests show that external scripts cannot directly modify sensitive internal variables like core temperature or fuel pressure.",
       "All critical data fields are marked private and sealed inside the module. Any external subsystem wishing to read or adjust reactor parameters must communicate strictly through designated public getter and setter methods.",
       "This architecture prevents unauthorized tampering and guarantees data validation rules before state changes occur across the subsystem.",
-      "Overheating warnings are sounding across the reactor floor. What core object-oriented principle of bundling data and hiding internal state behind controlled accessors must the team use to access the controls?"
+      "The core reactor vitals are locked inside an impenetrable black-box shell; outsider entities are forbidden direct contact with the internal variables and may only interact through sanctified access valves. Identify this protective fortress pillar."
     ],
     "codeLines": [],
-    "question": "What OOP concept keeps an object’s data controlled inside the object?",
+    "question": "What architectural discipline conceals internal state within a boundary, exposing only guarded interfaces to the outside world?",
     "hints": [
       {
         "text": "Data hiding and bundling using private variables and public getters/setters.",
@@ -611,10 +611,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The citadel's automated transport corridor is completely paralyzed. Two heavy construction droids are stationary at a narrow junction, locking up the entire logistics pipeline.",
       "Telemetry logs indicate that Droid 1 has acquired Lock A on the battery station and is waiting for Lock B on the rail system. Simultaneously, Droid 2 has acquired Lock B and is waiting for Lock A.",
       "Neither droid will release its held resource until it acquires the other, creating a permanent circular wait condition where no progress can occur.",
-      "Power levels are draining as the transport network freezes indefinitely. What classic operating system concurrency failure where processes wait forever for resources held by each other must the resistance diagnose?"
+      "Sentinel Alpha clutches Key A while begging for Key B; Sentinel Beta holds Key B while starving for Key A. Neither will yield, no preemption is allowed, and time freezes in an eternal circular Mexican standoff. Diagnose this paralysis."
     ],
     "codeLines": [],
-    "question": "What OS problem occurs when processes wait forever for resources held by one another?",
+    "question": "What catastrophic concurrency paralysis occurs when mutually waiting entities freeze eternally over withheld keys?",
     "hints": [
       {
         "text": "A permanent freeze caused by circular wait and mutual exclusion.",
@@ -656,10 +656,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The mainframe memory controller manages physical RAM by partitioning hardware space into uniform, fixed-size slots called frames. Simultaneously, virtual memory addresses are divided into equal-sized chunks.",
       "A translation table maps each logical block to any available physical frame in hardware, even if the allocated frames are scattered non-contiguously across physical chips.",
       "This architecture allows large programs to execute without requiring huge contiguous blocks of physical memory, completely avoiding external fragmentation.",
-      "Memory allocation is stalling across the mainframe. What operating system memory management technique dividing memory into fixed blocks mapped to frames must the engineers configure?"
+      "To eliminate external fragmentation in the memory matrix, Doom's hypervisor carves virtual memory into uniform fixed-size parcels and maps them onto physical hardware frames via translation tables. Name this chunking scheme."
     ],
     "codeLines": [],
-    "question": "What memory-management technique divides memory into fixed-size pages?",
+    "question": "What OS memory virtualization scheme maps uniform fixed-size logical partitions directly onto physical frames?",
     "hints": [
       {
         "text": "Fixed-size virtual memory blocks mapped to physical frames via a page table.",
@@ -702,10 +702,10 @@ export const DEFAULT_20_QUESTIONS = [
       "An automated search drone scans the subterranean tunnel network beneath the fortress to discover the quickest escape route for the resistance team.",
       "The drone's navigation algorithm begins at the root chamber and enqueues all immediate adjacent corridors at distance 1. Only after every neighbor at distance 1 has been inspected does it advance to distance 2.",
       "Using a FIFO queue to track discovered chambers, the drone guarantees uncovering the path with the fewest corridor hops.",
-      "The tunnel exit will collapse in moments. What graph traversal algorithm exploring nearby nodes layer by layer must the team activate to map the quickest exit?"
+      "A ripple expanding in concentric rings across a star map: it explores every immediate neighbor at distance 1 before daring to set foot on distance 2, guaranteeing the minimum hops in unweighted space. Enter its standard 3-letter acronym."
     ],
     "codeLines": [],
-    "question": "What graph traversal explores nearby nodes level by level?",
+    "question": "Which 3-letter traversal expands in level-by-level concentric frontiers to guarantee the fewest hops in unweighted graphs?",
     "hints": [
       {
         "text": "Explores layer by layer using a FIFO queue.",
@@ -748,10 +748,10 @@ export const DEFAULT_20_QUESTIONS = [
       "A reconnaissance droid navigates an intricate maze of ventilation shafts beneath the royal throne room. The droid's goal is to discover hidden sub-level chambers as quickly as possible.",
       "Rather than scanning all nearby branch options, the droid picks a single corridor and follows it aggressively until hitting a dead end. Only when trapped does it backtrack to the most recent fork and explore the next branch.",
       "The traversal uses a recursive call stack to remember unexplored decision junctions during backtracking.",
-      "The map interface requires authentication to plot the full tunnel graph. What graph exploration strategy that explores deep branches before backtracking must the team submit?"
+      "A lone explorer plunges recklessly down a single dark labyrinth branch, hitting dead ends before backtracking step-by-step through the call stack to explore uncharted chasms. Enter its 3-letter acronym."
     ],
     "codeLines": [],
-    "question": "What graph traversal explores one branch deeply before returning?",
+    "question": "Which 3-letter traversal dives to the absolute depths of each branch before retracing its steps?",
     "hints": [
       {
         "text": "Dives as deep as possible before backtracking, using recursion or a stack.",
@@ -794,10 +794,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The resistance intercepts a high-priority radio broadcast transmitted between Doom's field commanders. The message appears as scrambled text: 'KHOOR' instead of 'HELLO'.",
       "Analyzing frequency distribution and character offsets reveals an ancient substitution rule: every alphabetic letter in the plaintext message has been shifted forward by exactly three positions in the alphabet.",
       "Wrapping around from Z back to A, the encryption relies purely on a constant numerical shift key shared between sender and receiver.",
-      "To decrypt the incoming tactical commands before Doom strikes, what classic substitution cipher shifting characters by a fixed offset must the squad identify?"
+      "An imperial Roman obfuscation technique where every glyph in the imperial dispatch is systematically displaced by a fixed circular rotation across the alphabet wheel. Identify this historical substitution cipher."
     ],
     "codeLines": [],
-    "question": "What simple cipher shifts every letter by the same number of alphabet positions?",
+    "question": "What ancient Roman military cipher obscures messages by shifting every character by a constant uniform distance across the alphabet?",
     "hints": [
       {
         "text": "Named after a famous Roman emperor who used it for military dispatches.",
@@ -840,10 +840,10 @@ export const DEFAULT_20_QUESTIONS = [
       "A hardware security module shields Doom's quantum encryption keys using a high-speed bitwise logic circuit. The circuit combines incoming plaintext data with a secret pseudo-random key stream.",
       "Testing the binary gate reveals clear output rules: when two matching bits are compared (0 and 0, or 1 and 1), the circuit outputs 0. When two differing bits are compared (0 and 1, or 1 and 0), it outputs 1.",
       "Applying the exact same operation a second time with the key perfectly recovers the original data.",
-      "The cryptographic gate requires the operator to declare the binary operation. What bitwise logic operator giving 0 for equal bits and 1 for differing bits must the team specify?"
+      "The ultimate cryptographic mask: it rewards distinction and punishes conformity, outputting true if and only if the dual inputs disagree. Applied twice with the same key, it resurrects the original plaintext untouched. Name this 3-letter gate."
     ],
     "codeLines": [],
-    "question": "What binary operation gives 0 for equal bits and 1 for different bits?",
+    "question": "Which reversible 3-letter logic gate yields 1 for disparity, 0 for identity, and acts as the foundation of symmetric masks?",
     "hints": [
       {
         "text": "Bitwise exclusive OR operation, returning 1 only when inputs differ.",
@@ -885,10 +885,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The resistance infiltrates Doctor Doom's modern NoSQL storage cluster, which stores experimental biometric profiles from across the multiverse.",
       "Unlike legacy relational databases that force data into rigid tabular rows and predefined columns, this system stores each individual record as a flexible, hierarchical JSON/BSON object containing key-value pairs.",
       "Records inside the same collection can have entirely different fields, sub-structures, and nested arrays without requiring schema alterations.",
-      "To extract the master biometric record and unlock the final citadel chamber, what fundamental MongoDB data storage unit holding key-value pairs must the team identify?"
+      "Free from the rigid shackles of relational table columns, this polymorphic BSON payload encapsulates nested arrays and key-value attributes as an independent atomic entity in the collection. What is this fundamental NoSQL unit?"
     ],
     "codeLines": [],
-    "question": "What is the basic unit of data storage in MongoDB that holds key-value pairs in JSON/BSON format?",
+    "question": "What schema-flexible, polymorphic BSON entity constitutes the atomic record unit of NoSQL collections?",
     "hints": [
       {
         "text": "The NoSQL equivalent of a single row in relational tables.",
@@ -932,10 +932,10 @@ export const DEFAULT_20_QUESTIONS = [
       "Inside the citadel's secondary data relay, the resistance uncovers a sequence of dynamic memory blocks scattered across non-contiguous physical addresses in hardware RAM.",
       "Unlike rigid arrays that require continuous memory partitions, each discrete node in this structure stores its own data payload alongside a memory pointer explicitly referencing the address of the next item in the chain.",
       "Inserting or deleting elements in the middle of the collection requires only updating adjacent pointer links rather than shifting thousands of trailing elements through memory.",
-      "The memory chain is de-synchronizing rapidly. What fundamental linear data structure consisting of discrete nodes connected by pointer references must the squad identify to stabilize the relay?"
+      "A scattered constellation in heap space where no element knows its neighbors' addresses except through explicit directional pointers embedded in each cargo node. What fragile dynamic chain is this?"
     ],
     "codeLines": [],
-    "question": "What linear data structure consists of nodes where each node points to the next?",
+    "question": "What dynamic linear collection consists of scattered memory nodes linked solely through pointer references?",
     "hints": [
       {
         "text": "Nodes containing data and a next pointer reference.",
@@ -978,10 +978,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The resistance accesses Doom's hierarchical lineage archives stored in an ancient Latverian databank. At the top of the display sits a single root node that branches downward into left and right sub-structures.",
       "Each node in the architecture maintains at most two direct child pointers, organizing millions of historical records in a balanced hierarchical structure with distinct parent-child relationships.",
       "Searching, inserting, and deleting records takes logarithmic time when the structure is balanced, providing optimal hierarchical traversal across massive data sets.",
-      "The archive lock demands the specific data structure name. What hierarchical non-linear data structure where each parent node has at most two children must the team enter to unlock the vault?"
+      "A dendritic hierarchy rooted at the citadel crown, where every junction point is strictly forbidden from spawning more than a left or right successor. Name this dual-branching arboreal structure."
     ],
     "codeLines": [],
-    "question": "What hierarchical tree structure restricts each parent node to at most two children?",
+    "question": "What hierarchical bifurcating structure restricts every parental junction to at most a left and right descendant?",
     "hints": [
       {
         "text": "Root node with left and right subtrees.",
@@ -1025,10 +1025,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The fortress teleportation matrix requires instantaneous O(1) lookups to immediately translate destination planet names into spatial warp coordinate vectors.",
       "Instead of searching through lists or trees, the system passes the key string through a mathematical hash function to compute a direct array bucket index in memory.",
       "Collision handling mechanisms like separate chaining or open addressing guarantee data integrity even when two distinct key strings produce the exact same index position.",
-      "The warp gate is preparing to collapse under power strain. What associative key-value data structure offering constant-time average lookups must the engineers submit to stabilize the teleportation matrix?"
+      "A mathematical forge converts arbitrary alphanumeric keys into bucket addresses through a deterministic scramble, bypassing linear scans to seize any item in expected O(1) time. Name this associative powerhouse."
     ],
     "codeLines": [],
-    "question": "What data structure uses a hash function to map keys to values for fast lookups?",
+    "question": "What associative data structure harnesses deterministic mathematical scrambling to achieve O(1) expected retrieval?",
     "hints": [
       {
         "text": "Uses key-value pairs and hash functions for O(1) average lookup.",
@@ -1072,10 +1072,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The citadel logistics database was crippled by massive duplicate records, redundant columns, and catastrophic update anomalies resulting from years of unmonitored data entry across multiple warzones.",
       "Database architects apply systematic formal rules (1NF, 2NF, 3NF) to decompose massive unorganized tables into smaller, well-structured relational entities linked by foreign keys.",
       "This process completely eliminates data redundancy and guarantees that insertion, deletion, and modification operations maintain referential integrity without creating conflicting copies.",
-      "The schema migration console pauses for administrator confirmation. What systematic database design process organizes tables into normal forms to eliminate data redundancy?"
+      "To purge anomalies of insertion, update, and deletion, the grand architect decomposes sprawling monolithic tables into clean relational forms anchored by functional dependencies. Name this purification discipline."
     ],
     "codeLines": [],
-    "question": "What database process minimizes data redundancy by organizing fields and tables into normal forms?",
+    "question": "What mathematical database restructuring process eliminates redundancy and anomalies by progressing through successive normal forms?",
     "hints": [
       {
         "text": "Involves stages like 1NF, 2NF, and 3NF (Boyce-Codd).",
@@ -1118,10 +1118,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The citadel defense mainframe manages hundreds of simultaneous real-time radar and sensor telemetry streams within a single active running process.",
       "Rather than spawning heavy independent processes with isolated address spaces, the operating system dispatches lightweight execution streams that share the exact same memory space, code section, and global data.",
       "Each individual stream maintains its own program counter, register state, and private call stack, enabling genuine concurrent execution across multi-core processor architectures.",
-      "To assign CPU cores to these lightweight concurrent workers, what smallest schedulable unit of CPU execution within a process must the team specify?"
+      "A lightweight strand of execution woven inside a heavyweight process boundary, possessing its own stack and registers while freely swimming in the shared address space of its siblings. Identify this CPU scheduling unit."
     ],
     "codeLines": [],
-    "question": "What is the smallest lightweight unit of CPU execution within a process?",
+    "question": "What lightweight schedulable strand of execution shares memory address space with peer workers within a parent process?",
     "hints": [
       {
         "text": "Lightweight execution unit sharing process memory.",
@@ -1164,10 +1164,10 @@ export const DEFAULT_20_QUESTIONS = [
       "Multiple autonomous defense drones compete simultaneously for access to a limited cluster of three rapid-charging stations inside the fortress bay.",
       "A synchronization variable maintains an integer counter tracking available charging slots. Drones perform atomic wait (P) operations to decrement the counter upon entry and signal (V) operations to increment it upon leaving.",
       "When the counter drops to zero, any additional drones attempting access are placed into a sleep queue until a station is freed, preventing race conditions and hardware collisions.",
-      "The charging dock interface demands the synchronization primitive name. What classic OS concurrency control tool uses atomic integer counters with wait and signal operations?"
+      "Dijkstra's ancient railroad signalkeeper: an atomic integer gauge with dual non-divisible rites—one to decrement and sleep if empty (P), and one to increment and awaken a slumbering worker (V). Name this synchronization sentinel."
     ],
     "codeLines": [],
-    "question": "What OS synchronization variable uses atomic wait and signal operations to control access to shared resources?",
+    "question": "What atomic integer synchronization primitive regulates multi-resource access using classic P (wait) and V (signal) operations?",
     "hints": [
       {
         "text": "Invented by Edsger Dijkstra, uses wait (P) and signal (V).",
@@ -1210,10 +1210,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The resistance needs to plot the safest escape route through Battleworld's weighted network of teleporter nodes. Each connecting corridor possesses a non-negative energy cost.",
       "The navigation computer maintains a priority queue of tentative distances. It greedily selects the unvisited node with the lowest cumulative cost, relaxes neighboring edge weights, and calculates the single-source shortest path to all destinations.",
       "Because no edge weights are negative, the algorithm guarantees discovering the mathematically optimal path in O((V + E) log V) time across the complex weighted graph.",
-      "To engage the warp engine along the minimum-cost route before the sector explodes, what famous greedy shortest-path algorithm for weighted graphs must the team name?"
+      "A greedy pathfinder traverses weighted stellar hyperlanes by continuously extracting the minimum tentative distance from a priority queue and relaxing forward edges, forever blind to negative energy anomalies. Name the Dutch computer scientist behind this algorithm."
     ],
     "codeLines": [],
-    "question": "What greedy algorithm finds the shortest path between nodes in a graph with non-negative edge weights?",
+    "question": "Which famous greedy single-source shortest path algorithm relaxes edge weights using a priority queue, requiring all edge costs to be non-negative?",
     "hints": [
       {
         "text": "Named after Dutch computer scientist Edsger Dijkstra.",
@@ -1256,10 +1256,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The squad discovers the master cockpit of Doom's orbital battle cruiser. The pilot controls provide intuitive buttons like 'Engage Thrusters' and 'Shield Overcharge' on an elegant heads-up display.",
       "Behind the dashboard lie millions of complex hydraulic lines, plasma valves, and microcode routines. The pilot does not need to know how internal valves operate; the interface hides internal implementation details and exposes only essential features.",
       "In software engineering, this pillar allows developers to define clean abstract interfaces without exposing the underlying low-level implementation mechanics.",
-      "What core object-oriented programming principle focuses on hiding complex internal implementation details while displaying only essential functionality to the user?"
+      "The pilot cockpit reveals only a sleek throttle and heading compass, banishing the millions of fiery hydraulic calculations behind an opaque interface mask. Name this fundamental pillar of complexity reduction."
     ],
     "codeLines": [],
-    "question": "What OOP pillar hides complex internal implementation details and shows only essential functionality?",
+    "question": "What foundational software design principle distills intricate system realities into simplified, high-level behavioral interfaces?",
     "hints": [
       {
         "text": "One of the 4 pillars of OOP (alongside Encapsulation, Inheritance, Polymorphism).",
@@ -1301,10 +1301,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The mainframe's central processing unit is experiencing severe performance bottlenecks waiting for critical security data from slow secondary storage drives.",
       "Engineers install a small, ultra-fast high-speed memory layer (SRAM) directly adjacent to the CPU cores. Frequently accessed instructions and recently fetched data are retained in this buffer based on temporal and spatial locality.",
       "When a lookup succeeds (a 'hit'), data arrives in nanoseconds, dramatically reducing CPU idle cycles without fetching from slower main RAM or disk storage.",
-      "To accelerate system response before the citadel countdown expires, what high-speed temporary memory storage hardware must the engineers configure?"
+      "A lightning-fast staging sanctum nestled right against the processor core, exploiting temporal and spatial locality to intercept data requests before the sluggish main memory bus is ever provoked. Name this ultra-fast buffer."
     ],
     "codeLines": [],
-    "question": "What high-speed hardware or software storage layer stores recently accessed data for fast future retrieval?",
+    "question": "What high-speed hardware or software buffer harnesses spatial and temporal locality to prevent costly trips to main storage?",
     "hints": [
       {
         "text": "Fast temporary storage layer (L1, L2, L3).",
@@ -1347,10 +1347,10 @@ export const DEFAULT_20_QUESTIONS = [
       "The team reaches the final central vault housing the relationship schemas connecting Doom's global armories with assigned commanding officers across the realm.",
       "The Armory table contains a dedicated column that references the primary key of the Commander table, linking each weapon inventory record to a verified commanding officer.",
       "The database engine enforces referential integrity: no armory can list an invalid or non-existent commander ID, preventing orphan records across the relational system.",
-      "To unlock the final master vault door and conclude the Battleworld mission, what relational database field that references the primary key of another table must the team enter?"
+      "A relational bridge across tabular realms: an attribute embedded within one record that points with unyielding referential integrity to the sovereign primary key of a distant table. Enter this cross-table anchor."
     ],
     "codeLines": [],
-    "question": "What database key creates a link between two tables by referencing the primary key of another table?",
+    "question": "What relational integrity constraint embeds a pointer in a child table to enforce references to a sovereign primary key in another table?",
     "hints": [
       {
         "text": "Enforces referential integrity between tables.",

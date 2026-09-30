@@ -66,6 +66,8 @@ export default function App() {
   const [isChamberEntering, setIsChamberEntering] = useState(false);
   const hasInitializedQuestionIndexRef = useRef(false);
   const lastSessionNumberRef = useRef(null);
+  // Guard: prevent syncServerState from overwriting optimistic participant_started during session start
+  const isStartingSessionRef = useRef(false);
 
   const [revealedParas, setRevealedParas] = useState(1);
   const currentQuestion = currentQuestions[activeQuestionIndex] || currentQuestions[0] || null;
@@ -226,7 +228,9 @@ export default function App() {
   // ─────────────────────────────────────────────────────────────────────────────
   // SERVER STATE SYNCHRONIZATION (INITIAL LOAD, REFRESH & SSE STREAM)
   // ─────────────────────────────────────────────────────────────────────────────
-  const syncServerState = async () => {
+  const syncServerState = async ({ skipIfStarting = false } = {}) => {
+    // During session start, prevent a stale server response from overwriting participant_started=true
+    if (skipIfStarting && isStartingSessionRef.current) return;
     try {
       if (participantToken) {
         const res = await fetch('/api/participant/state', {
@@ -239,10 +243,14 @@ export default function App() {
         }
         const data = await res.json();
         if (data && data.success) {
-          setEventState(data.eventState);
+          // If session is being started, preserve the optimistic participant_started flag
+          const safeEventState = isStartingSessionRef.current
+            ? { ...data.eventState, participant_started: true, timer_on_hold: false }
+            : data.eventState;
+          setEventState(safeEventState);
           setTeamName(data.participant.teamName);
           setSessionStats(data.sessionStats || {});
-          timerSynchronizer.syncServerState(data.eventState);
+          timerSynchronizer.syncServerState(safeEventState);
           setRemainingTime(timerSynchronizer.getRemainingSeconds());
 
           if (data.hintsUsed && Array.isArray(data.hintsUsed)) {
@@ -339,15 +347,16 @@ export default function App() {
               data.type === 'INIT_STATE'
             ) {
               const newEventState = data.payload?.eventState || data.payload;
-              if (newEventState) {
+              if (newEventState && !isStartingSessionRef.current) {
                 setEventState(newEventState);
                 timerSynchronizer.syncServerState(newEventState);
                 setRemainingTime(timerSynchronizer.getRemainingSeconds());
               }
               if (participantToken) {
-                syncServerState();
+                syncServerState({ skipIfStarting: true });
               }
             } else if (data.type === 'EVENT_RESET') {
+              isStartingSessionRef.current = false;
               setEventState(data.payload);
               timerSynchronizer.syncServerState(data.payload);
               setRemainingTime(timerSynchronizer.getRemainingSeconds());
@@ -595,31 +604,41 @@ export default function App() {
       } else {
         narrativeEngine.onWrongAnswer(`level_${activeQuestionIndex + 1 + (currentSessionNumber === 2 ? 15 : 0)}`);
 
-        // Update attemptsRemaining and isLocked in currentQuestions
-        if (data && (data.attemptsRemaining !== undefined || data.isLocked !== undefined)) {
-          setCurrentQuestions((prev) =>
-            prev.map((q) =>
-              q.id === currentQuestion.id
-                ? {
-                  ...q,
-                  attemptsRemaining: data.attemptsRemaining,
-                  attemptsUsed: data.attemptsUsed,
-                  isLocked: Boolean(data.isLocked),
-                  potentialPoints: data.isLocked ? 0 : Math.max(0, (q.potentialPoints || 20) - 2)
-                }
-                : q
-            )
-          );
-        }
+        // Update wrongCount, attemptsUsed and potentialPoints in currentQuestions
+        const updatedWrongs = data?.wrongCount !== undefined
+          ? data.wrongCount
+          : (data?.attemptsUsed !== undefined ? data.attemptsUsed : ((currentQuestion.attemptsUsed || 0) + 1));
+
+        setCurrentQuestions((prev) =>
+          prev.map((q) => {
+            if (q.id === currentQuestion.id) {
+              const usedHintsCount = (hintsUsed[q.id] || []).length;
+              const hDeduct = usedHintsCount >= 3 ? 20 : (usedHintsCount === 2 ? 8 : (usedHintsCount === 1 ? 3 : 0));
+              const penWrongs = Math.max(0, updatedWrongs - 2);
+              const calculatedPotential = usedHintsCount >= 3 ? 0 : Math.max(0, 20 - hDeduct - (penWrongs * 2));
+
+              return {
+                ...q,
+                attemptsRemaining: null,
+                attemptsUsed: updatedWrongs,
+                wrongCount: updatedWrongs,
+                isLocked: false,
+                potentialPoints: calculatedPotential
+              };
+            }
+            return q;
+          })
+        );
 
         // Trigger server state sync to immediately reflect any updates
         syncServerState();
         return {
           success: false,
-          attemptsRemaining: data?.attemptsRemaining,
-          attemptsUsed: data?.attemptsUsed,
-          isLocked: data?.isLocked,
-          message: data?.message || 'ACCESS DENIED — −2 Points Penalty.'
+          attemptsRemaining: null,
+          attemptsUsed: updatedWrongs,
+          wrongCount: updatedWrongs,
+          isLocked: false,
+          message: data?.message || 'ACCESS DENIED — Incorrect key.'
         };
       }
     } catch (err) {
@@ -664,6 +683,75 @@ export default function App() {
     }
   };
 
+  const handleStartParticipantSession = async () => {
+    if (!participantToken) return;
+    const sessNum = eventState.active_session || (eventState.status?.startsWith('SESSION_2') ? 2 : 1);
+    
+    // Mark that we are starting — guard syncServerState from overwriting optimistic state
+    isStartingSessionRef.current = true;
+
+    // Immediate optimistic transition — operative enters the chamber instantly without server lag
+    const optimisticStartTime = Date.now();
+    const optimisticEndTime = optimisticStartTime + ((eventState.session_duration_minutes || 60) * 60 * 1000);
+    const optimisticState = {
+      ...eventState,
+      participant_started: true,
+      timer_on_hold: false,
+      session_start_time: optimisticStartTime,
+      session_end_time: optimisticEndTime
+    };
+    setEventState(optimisticState);
+    timerSynchronizer.syncServerState(optimisticState);
+    setRemainingTime(timerSynchronizer.getRemainingSeconds());
+
+    try {
+      const res = await fetch(`/api/session/${sessNum}/start`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-participant-token': participantToken
+        }
+      });
+      const data = await res.json();
+      if (data && data.success && data.eventState) {
+        // Use authoritative server state but keep participant_started=true
+        const authorizedState = { ...data.eventState, participant_started: true, timer_on_hold: false };
+        setEventState(authorizedState);
+        timerSynchronizer.syncServerState(authorizedState);
+        setRemainingTime(timerSynchronizer.getRemainingSeconds());
+      }
+
+      // Fetch questions for the newly started session
+      try {
+        const qRes = await fetch(`/api/session/${sessNum}/questions`, {
+          headers: { 'x-participant-token': participantToken }
+        });
+        const qData = await qRes.json();
+        if (qData && qData.success && qData.questions && qData.questions.length > 0) {
+          setCurrentQuestions(qData.questions);
+          const firstUnsolved = qData.questions.findIndex((q) => !q.isSolved);
+          const targetIdx = firstUnsolved !== -1 ? firstUnsolved : 0;
+          setActiveQuestionIndex(targetIdx);
+          hasInitializedQuestionIndexRef.current = true;
+          lastSessionNumberRef.current = sessNum;
+        }
+      } catch (qErr) {
+        console.warn('[App] Failed to fetch questions after session start:', qErr);
+      }
+
+      // After a short delay, do a clean sync (DB has settled by then)
+      setTimeout(() => {
+        isStartingSessionRef.current = false;
+        syncServerState();
+      }, 1500);
+
+    } catch (err) {
+      console.warn('[App] Failed to start participant session on server:', err);
+      isStartingSessionRef.current = false;
+      await syncServerState();
+    }
+  };
+
   const formatClock = (totalSeconds) => {
     const s = Math.max(0, Math.round(totalSeconds));
     const m = Math.floor(s / 60);
@@ -671,7 +759,12 @@ export default function App() {
     return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
   };
 
-  const isWarning = remainingTime <= 300 && remainingTime > 0;
+  const isTimerOnHold = Boolean(
+    (eventState.status === 'SESSION_1_ACTIVE' || eventState.status === 'SESSION_2_ACTIVE') &&
+    (!eventState.participant_started || eventState.timer_on_hold)
+  );
+
+  const isWarning = remainingTime <= 300 && remainingTime > 0 && !isTimerOnHold;
   const timerString = formatClock(remainingTime);
   const sessionSolvedCount = currentQuestions.filter((q) => solvedQuestions.includes(q.id)).length;
   const progressPct = currentQuestions.length > 0 ? Math.round((sessionSolvedCount / currentQuestions.length) * 100) : 0;
@@ -745,7 +838,11 @@ export default function App() {
           onLogout={handleLogout}
         />
         <AdminPanel isOpen={adminOpen} onClose={() => setAdminOpen(false)} adminToken={adminAuthToken || 'robin123'} />
-        <LeaderboardModal isOpen={leaderboardOpen} onClose={() => setLeaderboardOpen(false)} />
+        <LeaderboardModal
+          isOpen={leaderboardOpen}
+          onClose={() => setLeaderboardOpen(false)}
+          currentTeamName={teamName}
+        />
       </div>
     );
   }
@@ -757,14 +854,13 @@ export default function App() {
     );
   }
 
-  // Gate 2: Waiting Room only for admin-controlled closed/locked states.
-  // Do NOT send to WaitingRoom just because session is expired or all solved —
-  // FailureModal and the in-game locked overlay handle those cases.
+  // Gate 2: Waiting Room for closed/locked states OR when session is active but participant has not started timer yet.
   const isWaitingRoomState = (
     eventState.status === 'CLOSED' ||
     eventState.status === 'SESSION_1_LOCKED' ||
     eventState.status === 'SESSION_2_LOCKED' ||
-    eventState.status === 'EVENT_FINISHED'
+    eventState.status === 'EVENT_FINISHED' ||
+    ((eventState.status === 'SESSION_1_ACTIVE' || eventState.status === 'SESSION_2_ACTIVE') && !eventState.participant_started)
   );
 
   const displayLevelNumber = activeQuestionIndex + 1 + (currentSessionNumber === 2 ? 15 : 0);
@@ -784,6 +880,7 @@ export default function App() {
             : (eventState.status === 'SESSION_1_ACTIVE' ? 'SESSION 1' : 'MISSION')
         }
         isPaused={Boolean(eventState.timer_paused)}
+        isTimerOnHold={isTimerOnHold}
         isExpired={isTimeExpired}
         progressPct={progressPct}
         evidenceCount={evidenceList.length}
@@ -800,6 +897,7 @@ export default function App() {
           eventState={eventState}
           teamName={teamName}
           sessionStats={sessionStats}
+          onStartSession={handleStartParticipantSession}
           onOpenLeaderboard={() => setLeaderboardOpen(true)}
           onLogout={handleLogout}
         />
@@ -1078,9 +1176,8 @@ export default function App() {
                     question: currentQuestion.question,
                     hints: currentQuestion.hints,
                     isSolved: currentQuestion.isSolved || solvedQuestions.includes(currentQuestion.id),
-                    attemptsRemaining: currentQuestion.attemptsRemaining,
                     attemptsUsed: currentQuestion.attemptsUsed,
-                    isLocked: currentQuestion.isLocked,
+                    wrongCount: currentQuestion.wrongCount !== undefined ? currentQuestion.wrongCount : (currentQuestion.isSolved ? Math.max(0, (currentQuestion.attemptsUsed || 1) - 1) : (currentQuestion.attemptsUsed || 0)),
                     potentialPoints: currentQuestion.potentialPoints
                   }}
                   hintsUsed={hintsUsed}
@@ -1204,6 +1301,7 @@ export default function App() {
       <LeaderboardModal
         isOpen={leaderboardOpen}
         onClose={() => setLeaderboardOpen(false)}
+        currentTeamName={teamName}
       />
 
       {/* CONGRATULATIONS & SESSION FINISHED POPUP */}

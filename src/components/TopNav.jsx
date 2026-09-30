@@ -10,6 +10,7 @@ export const TopNav = ({
   isWarning,
   sessionLabel,
   isPaused,
+  isTimerOnHold,
   isExpired,
   progressPct,
   evidenceCount,
@@ -50,8 +51,8 @@ export const TopNav = ({
             {sessionLabel.toUpperCase()}
           </span>
         )}
-        <span className="top-nav__timer-value" id="game-countdown" style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: '700', color: isWarning ? '#FF4D5A' : '#00FF9C', letterSpacing: '0.06em', textShadow: isWarning ? '0 0 10px rgba(255,77,90,0.6)' : '0 0 10px rgba(0,255,156,0.5)' }}>
-          ● {isPaused ? `${timerString} (PAUSED)` : (isExpired ? '00:00 (LOCKED)' : timerString)}
+        <span className="top-nav__timer-value" id="game-countdown" style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: '700', color: isWarning ? '#FF4D5A' : (isTimerOnHold ? '#00E5FF' : '#00FF9C'), letterSpacing: '0.06em', textShadow: isWarning ? '0 0 10px rgba(255,77,90,0.6)' : '0 0 10px rgba(0,255,156,0.5)' }}>
+          ● {isPaused ? `${timerString} (PAUSED)` : (isTimerOnHold ? `${timerString} (ON HOLD)` : (isExpired ? '00:00 (LOCKED)' : timerString))}
         </span>
       </div>
 

@@ -64,33 +64,31 @@ export const Database = {
 
     const now = Date.now();
     const activeSession = state.active_session || (state.status?.startsWith('SESSION_2') ? 2 : (state.status?.startsWith('SESSION_1') ? 1 : 0));
-    let startedAt = activeSession ? state[`session${activeSession}_started_at`] : null;
     const durationMinutes = state.session_duration_minutes || 60;
     const timeAdjustmentSec = state.time_adjustment_seconds || 0;
 
-    // Per-participant individual timer & hint penalty
+    let startedAt = null;
+    let participantStarted = false;
+    let timerOnHold = true;
     let participantHintPenaltySec = 0;
     let participantWrongPenaltySec = 0;
+
+    const isSessionActive = state.status === 'SESSION_1_ACTIVE' || state.status === 'SESSION_2_ACTIVE';
 
     if (participantId && activeSession) {
       try {
         const sessionKey = activeSession === 1 ? 'session1' : 'session2';
-        const isSessionActive = state.status === 'SESSION_1_ACTIVE' || state.status === 'SESSION_2_ACTIVE';
-
-        // Fetch participant session doc
-        let pSession = await MongoModels.ParticipantSession.findOne({ participantId }).lean();
-        if (pSession && isSessionActive) {
-          if (!pSession[sessionKey]?.startedAt) {
-            // Participant starts countdown from when admin gave access and participant is active
-            const pStart = now;
-            await MongoModels.ParticipantSession.updateOne(
-              { participantId },
-              { $set: { [`${sessionKey}.startedAt`]: pStart } }
-            );
-            startedAt = pStart;
-          } else {
-            startedAt = pSession[sessionKey].startedAt;
-          }
+        const pSession = await MongoModels.ParticipantSession.findOne({ participantId }).lean();
+        
+        if (pSession && pSession[sessionKey]?.startedAt) {
+          startedAt = pSession[sessionKey].startedAt;
+          participantStarted = true;
+          timerOnHold = false;
+        } else {
+          // Timer on hold until participant explicitly starts
+          startedAt = null;
+          participantStarted = false;
+          timerOnHold = isSessionActive;
         }
 
         // Hints penalty only reduces timer for this specific participant
@@ -105,16 +103,20 @@ export const Database = {
       } catch (e) {
         participantHintPenaltySec = 0;
       }
+    } else {
+      startedAt = activeSession ? state[`session${activeSession}_started_at`] : null;
+      participantStarted = Boolean(startedAt);
+      timerOnHold = !startedAt && isSessionActive;
     }
 
     // Hint penalties deduct timer countdown only for this participant
     const totalDeductionSec = participantHintPenaltySec;
     const baseAllowedSec = Math.max(0, (durationMinutes * 60) + timeAdjustmentSec - totalDeductionSec);
 
-    let sessionRemainingSec = 0;
+    let sessionRemainingSec = baseAllowedSec;
     let isExpired = false;
 
-    if (startedAt && (state.status === 'SESSION_1_ACTIVE' || state.status === 'SESSION_2_ACTIVE')) {
+    if (startedAt && isSessionActive) {
       const effectiveNow = (state.timer_paused && state.timer_paused_at) ? state.timer_paused_at : now;
       const elapsedSec = Math.max(0, Math.floor((effectiveNow - startedAt) / 1000));
       sessionRemainingSec = Math.max(0, baseAllowedSec - elapsedSec);
@@ -137,6 +139,8 @@ export const Database = {
       session_remaining_seconds: sessionRemainingSec,
       participant_hint_penalty_seconds: participantHintPenaltySec,
       participant_wrong_penalty_seconds: participantWrongPenaltySec,
+      participant_started: participantStarted,
+      timer_on_hold: timerOnHold,
       is_expired: isExpired,
       server_time: now
     };
@@ -596,6 +600,38 @@ export const Database = {
     return assignedCount;
   },
 
+  async startParticipantSession(participantId, sessionNumber = 1) {
+    await ensureDb();
+    const sessionKey = sessionNumber === 1 ? 'session1' : 'session2';
+    const now = Date.now();
+    let pSession = await MongoModels.ParticipantSession.findOne({ participantId }).lean();
+    if (!pSession) {
+      const p = await MongoModels.Participant.findOne({ id: participantId }).lean();
+      pSession = await MongoModels.ParticipantSession.create({
+        participantId,
+        teamName: p?.teamName || '',
+        session1: { startedAt: null, completedAt: null, duration: 0, score: 0, answersCount: 0, completed: false },
+        session2: { startedAt: null, completedAt: null, duration: 0, score: 0, answersCount: 0, completed: false },
+        totalScore: 0,
+        totalTime: 0
+      });
+    }
+
+    if (!pSession[sessionKey]?.startedAt) {
+      await MongoModels.ParticipantSession.updateOne(
+        { participantId },
+        {
+          $set: {
+            [`${sessionKey}.startedAt`]: now,
+            [`${sessionKey}.status`]: 'ACTIVE'
+          }
+        }
+      );
+    }
+
+    return this.getEventState(participantId);
+  },
+
   async getParticipantQuestionsForSession(participantId, sessionNumber) {
     await ensureDb();
     let assignments = await MongoModels.QuestionAssignment.find({ participantId, sessionNumber })
@@ -638,10 +674,10 @@ export const Database = {
       const isSolved = qAns.some(a => a.isCorrect);
       const wrongCount = qAns.filter(a => !a.isCorrect).length;
       const attemptsUsed = isSolved ? (wrongCount + 1) : wrongCount;
-      const attemptsRemaining = isSolved ? 0 : Math.max(0, 2 - wrongCount);
-      const isLocked = !isSolved && wrongCount >= 2;
+      const attemptsRemaining = isSolved ? 0 : null;
+      const isLocked = false;
 
-      // Base 20 pts, Hint 1 => -3, Hint 2 => -8, Hint 3 => 0 pts, Wrong => -2 each
+      // Base 20 pts, Hint 1 => -3, Hint 2 => -8, Hint 3 => 0 pts, Wrong (>2) => -2 each
       let potentialPoints = 20;
       if (qHints.length >= 3) {
         potentialPoints = 0;
@@ -650,8 +686,8 @@ export const Database = {
       } else if (qHints.length === 1) {
         potentialPoints = 17; // 20 - 3
       }
-      potentialPoints = Math.max(0, potentialPoints - (wrongCount * 2));
-      if (isLocked) potentialPoints = 0;
+      const penalizedWrongs = Math.max(0, wrongCount - 2);
+      potentialPoints = qHints.length >= 3 ? 0 : Math.max(0, potentialPoints - (penalizedWrongs * 2));
 
       const levelNumber = sessionNumber === 1 ? assign.questionOrder : (assign.questionOrder + 15);
       const formattedLevelStr = String(levelNumber).padStart(2, '0');
@@ -661,6 +697,18 @@ export const Database = {
 
       const rawQuestionStr = fullQ.question || '';
       const cleanQuestionStr = rawQuestionStr.replace(/^(ROOM|CHAMBER|STAGE|LEVEL|SECTOR)\s*\d+[:\-—\s]*/i, '').trim();
+
+      // Dynamically adapt story paragraphs to show this participant's assigned room/chamber number
+      const dynamicStory = (fullQ.story || []).map((para) => {
+        if (typeof para !== 'string') return para;
+        return para
+          .replace(/(CHAMBER|ROOM|STAGE|LEVEL|SECTOR)\s*\d+/gi, `$1 ${formattedLevelStr}`)
+          .replace(/(Chamber|Room|Stage|Level|Sector)\s*\d+/g, `$1 ${formattedLevelStr}`);
+      });
+
+      const dynamicEvidenceTitle = fullQ.evidenceTitle
+        ? fullQ.evidenceTitle.replace(/(ROOM|CHAMBER|STAGE|LEVEL|SECTOR)\s*\d+/gi, `$1 ${formattedLevelStr}`)
+        : `Room ${formattedLevelStr} Evidence Fragment`;
 
       return {
         assignmentId: assign.assignmentId,
@@ -675,16 +723,17 @@ export const Database = {
         category: fullQ.category,
         difficulty: fullQ.difficulty,
         investigationType: fullQ.investigationType,
-        story: fullQ.story,
+        story: dynamicStory,
         codeLines: fullQ.codeLines,
         question: cleanQuestionStr || fullQ.question,
         hints: fullQ.hints,
-        fragment: fullQ.fragment,
-        evidenceTitle: fullQ.evidenceTitle,
+        fragment: levelNumber,
+        evidenceTitle: dynamicEvidenceTitle,
         consequence: fullQ.consequence,
         isSolved,
         attemptsUsed,
         attemptsRemaining,
+        wrongCount,
         isLocked,
         potentialPoints
       };
@@ -708,8 +757,13 @@ export const Database = {
       throw new Error(`CHAMBER LOCKED: Session ${sessionNumber} is currently not accepting submissions.`);
     }
 
+    // Auto-start participant session on first submission if still on hold
+    let participantState = await this.getEventState(participantId);
+    if (!participantState.participant_started) {
+      participantState = await this.startParticipantSession(participantId, sessionNumber);
+    }
+
     // Check individual participant countdown expiration
-    const participantState = await this.getEventState(participantId);
     if (participantState.is_expired) {
       throw new Error('COUNTDOWN EXPIRED: Your session timer has ended. Chamber inputs are locked.');
     }
@@ -736,9 +790,6 @@ export const Database = {
     }
 
     const wrongAttempts = previousAnswers.filter(a => !a.isCorrect).length;
-    if (wrongAttempts >= 2) {
-      throw new Error('MAX ATTEMPTS REACHED (2/2): Chamber inputs are permanently locked. 0 points awarded.');
-    }
 
     const clean = (val) => String(val || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
     const cleanInput = clean(rawAnswer);
@@ -762,7 +813,7 @@ export const Database = {
       // Hint 1: -3 points
       // Hint 2: -5 points (cumulative -8)
       // Hint 3: 0 points (direct cipher reveal)
-      // Prior wrong attempts: -2 points each
+      // Wrong attempts: 2 free attempts, then -2 points per wrong attempt (>2)
       let basePoints = 20;
       let hintNote = '';
       if (qHints.length >= 3) {
@@ -776,7 +827,8 @@ export const Database = {
         hintNote = ' (−3 PTS FOR 1 HINT)';
       }
 
-      const wrongDeduction = wrongAttempts * 2; // -2 pts if solved on 2nd attempt
+      const penalizedWrongs = Math.max(0, wrongAttempts - 2);
+      const wrongDeduction = penalizedWrongs * 2;
       const finalPointsEarned = qHints.length >= 3 ? 0 : Math.max(0, basePoints - wrongDeduction);
 
       const answerRecord = {
@@ -828,7 +880,9 @@ export const Database = {
         MongoModels.Participant.updateOne({ id: participantId }, { $set: { lastActiveAt: Date.now() } })
       ]);
 
-      const wrongDetail = wrongDeduction > 0 ? ` (−${wrongDeduction} PTS FOR 1 WRONG ATTEMPT)` : '';
+      const wrongDetail = wrongDeduction > 0
+        ? ` (−${wrongDeduction} PTS FOR ${wrongAttempts} WRONG ATTEMPTS)`
+        : (wrongAttempts > 0 ? ` (${wrongAttempts} FREE WRONG ATTEMPT${wrongAttempts > 1 ? 'S' : ''} USED)` : '');
 
       return {
         success: true,
@@ -836,6 +890,7 @@ export const Database = {
         pointsEarned: finalPointsEarned,
         attemptsRemaining: 0,
         attemptsUsed: currentAttemptNumber,
+        wrongCount: wrongAttempts,
         isLocked: false,
         hintsUsedOnQuestion: qHints.length,
         fragment: question.fragment,
@@ -858,23 +913,32 @@ export const Database = {
 
       await MongoModels.Answer.create(answerRecord);
 
-      const attemptsRemaining = Math.max(0, 2 - currentAttemptNumber);
-      const isLocked = attemptsRemaining === 0;
+      const penalizedWrongs = Math.max(0, currentAttemptNumber - 2);
+      const penaltyNote = currentAttemptNumber === 1
+        ? '1ST WRONG ATTEMPT (1 FREE ATTEMPT LEFT)'
+        : currentAttemptNumber === 2
+          ? '2ND WRONG ATTEMPT (PENALTIES APPLY ON NEXT WRONG ATTEMPTS)'
+          : `−${penalizedWrongs * 2} PTS WRONG PENALTY (−2 PTS PER ATTEMPT AFTER 2)`;
+
+      const message = currentAttemptNumber === 1
+        ? 'ACCESS DENIED — Incorrect key. (Attempt 1 of 2 free attempts used)'
+        : currentAttemptNumber === 2
+          ? 'ACCESS DENIED — Incorrect key. (Attempt 2 of 2 free attempts used. Next wrong attempt deducts 2 pts)'
+          : `ACCESS DENIED — Incorrect key. (−2 Points Penalty applied for attempt ${currentAttemptNumber})`;
 
       return {
         success: false,
         isCorrect: false,
         pointsEarned: 0,
-        attemptsRemaining,
+        attemptsRemaining: null,
         attemptsUsed: currentAttemptNumber,
-        isLocked,
+        wrongCount: currentAttemptNumber,
+        isLocked: false,
         hintsUsedOnQuestion: qHints.length,
         fragment: null,
         evidenceTitle: null,
-        penaltyNote: isLocked ? 'CHAMBER LOCKED — 0 POINTS' : '−2 PTS PENALTY (1 ATTEMPT LEFT)',
-        message: isLocked
-          ? 'MAX ATTEMPTS REACHED (2/2 WRONG). Chamber inputs locked — 0 points awarded.'
-          : 'ACCESS DENIED — Incorrect key. (−2 Points Penalty. 1 Attempt Remaining)'
+        penaltyNote,
+        message
       };
     }
   },
@@ -892,6 +956,12 @@ export const Database = {
         penalty: penaltyNum,
         usedAt: Date.now()
       });
+    }
+
+    const currentState = await this.getEventState(participantId);
+    if (!currentState.participant_started) {
+      const activeSess = currentState.active_session || 1;
+      await this.startParticipantSession(participantId, activeSess);
     }
 
     const [allHints, state] = await Promise.all([
@@ -1018,9 +1088,14 @@ export const Database = {
       const correctAnswers = pAnswers.filter(a => a.isCorrect);
       const wrongAnswers = pAnswers.filter(a => !a.isCorrect);
       const wrongCount = wrongAnswers.length;
-      const wrongPenaltyPoints = wrongCount * 2;
 
       const solvedQIds = new Set(correctAnswers.map(a => a.questionId));
+      const allQIds = new Set(pAnswers.map(a => a.questionId));
+      let totalWrongPenaltyPoints = 0;
+      allQIds.forEach(qId => {
+        const qWrongs = wrongAnswers.filter(w => w.questionId === qId).length;
+        totalWrongPenaltyPoints += Math.max(0, qWrongs - 2) * 2;
+      });
 
       let totalPoints = 0;
       let session1Points = 0;
@@ -1040,8 +1115,9 @@ export const Database = {
           qEarned = 17; // 20 - 3
         }
 
-        // Deduct 2 points per wrong attempt
-        qEarned = qHints.length >= 3 ? 0 : Math.max(0, qEarned - (qWrongs * 2));
+        // Deduct 2 points per wrong attempt ONLY after 2nd attempt
+        const penalizedWrongs = Math.max(0, qWrongs - 2);
+        qEarned = qHints.length >= 3 ? 0 : Math.max(0, qEarned - (penalizedWrongs * 2));
 
         const assign = pAssigns.find(a => a.questionId === qId);
         if (assign && assign.sessionNumber === 1) {
@@ -1063,6 +1139,7 @@ export const Database = {
         teamName: p.teamName,
         solvedCount: solvedQIds.size,
         wrongCount,
+        wrongPenaltyPoints: totalWrongPenaltyPoints,
         hintsUsedCount: pHints.length,
         totalPenalty,
         totalPoints,

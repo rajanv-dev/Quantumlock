@@ -6662,7 +6662,7 @@ button {
   position: fixed;
   inset: 0;
   z-index: -5;
-  background: rgba(0, 0, 0, 0.25);
+  background: radial-gradient(circle at center, rgba(2, 8, 5, 0.4) 0%, rgba(1, 4, 2, 0.8) 100%);
   pointer-events: none;
 }
 

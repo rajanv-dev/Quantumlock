@@ -7,13 +7,17 @@ export const BackgroundCanvas = () => {
       <div
         className="static-background"
         style={{
-          backgroundImage: `url(${loginBackground})`
+          backgroundImage: `url(${loginBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat'
         }}
       />
       <div className="game-background-overlay" />
     </div>
   );
 };
+
 
 
 
